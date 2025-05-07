@@ -1,7 +1,6 @@
 package com.agenda.app.repository;
 
-import com.agenda.app.model.Customer;
-
+import com.agenda.app.model.Company;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -14,5 +13,6 @@ import java.util.UUID;
  *
  */
 
-public interface CustomerRepository extends JpaRepository<Customer, UUID> {
+public interface CompanyRepository extends JpaRepository<Company, UUID>{
+
 }

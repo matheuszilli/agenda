@@ -8,6 +8,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.List;
 
+/**
+ * Representa a empresa no sistema.
+ * A empresa pode ter várias filiais e serviços associados.
+ * Cada empresa pode ter vários profissionais e clientes associados.
+ *
+ * Saber sobre esse trecho:
+ * cascade = CascadeType.ALL -> significa que se eu apagar a company todas as subsidiaries são apagadas
+ * caso não queira o exemplo acima seria cascade = CascadeType.REMOVE
+ */
+
 @Entity
 @Table(name = "companies")
 @Getter @Setter @NoArgsConstructor
