@@ -20,6 +20,10 @@ import java.time.LocalTime;
 @EntityListeners(AuditingEntityListener.class)
 public class Professional extends BaseEntity {
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @NotBlank @Size(max = 50)
     @Column(name = "first_name", nullable = false, length = 50)
     private String firstName;

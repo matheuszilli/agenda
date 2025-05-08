@@ -5,8 +5,10 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.math.BigDecimal;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "service_order")
@@ -22,12 +24,20 @@ public class ServiceOrder extends BaseEntity {
     @JoinColumn(name = "professional_id", nullable = false)
     private Professional professional;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "service_id", nullable = false)
-    private Service service;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "service_order_services",
+            joinColumns = @JoinColumn(name = "service_order_id"),
+            inverseJoinColumns = @JoinColumn(name = "service_id"))
+    private List<BusinessService> businessServices = new ArrayList<>();
 
     @Column(name = "status", nullable = false, length = 20)
-    private String status;
+    private ServiceOrderStatus status;
+
+    @Column(name = "total_price", nullable = false)
+    private BigDecimal totalPrice = BigDecimal.ZERO;
+
+    @Column(name = "discount", nullable = false)
+    private BigDecimal discount = BigDecimal.ZERO;
 
     @OneToOne(mappedBy = "serviceOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Payment payment;

@@ -1,7 +1,7 @@
 package com.agenda.app.model;
 
 public enum AppointmentStatus {
-    SCHEDULED,
+    PENDING,
     CANCELLED,
     CONFIRMED,
     NOT_CONFIRMED,

@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @Table(name = "services")
 @Getter @Setter @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class Service extends BaseEntity {
+public class BusinessService extends BaseEntity {
 
     @NotBlank
     @Column(nullable = false, length = 100)
@@ -28,6 +28,9 @@ public class Service extends BaseEntity {
 
     @Column(name = "duration_minutes", nullable = false)
     private Integer durationInMinutes;
+
+    @Column(name = "requires_pre_payment", nullable = false)
+    private boolean requiresPrePayment;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "company_id", nullable = false)

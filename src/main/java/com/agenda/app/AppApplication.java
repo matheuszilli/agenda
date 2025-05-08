@@ -7,14 +7,12 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.UUID;
 
 
 @SpringBootApplication
@@ -77,18 +75,18 @@ public class AppApplication {
 			professionalRepository.save(professional);
 
 			// Criar e salvar Service
-			Service service = new Service();
-			service.setName("Consulta Geral");
-			service.setPrice(new BigDecimal("150.00"));
-			service.setDurationInMinutes(30);
-			service.setCompany(company);
-			serviceRepository.save(service);
+			BusinessService businessService = new BusinessService();
+			businessService.setName("Consulta Geral");
+			businessService.setPrice(new BigDecimal("150.00"));
+			businessService.setDurationInMinutes(30);
+			businessService.setCompany(company);
+			serviceRepository.save(businessService);
 
 			// Criar e salvar Appointment
 			Appointment appointment = new Appointment();
 			appointment.setCustomer(customer);
 			appointment.setProfessional(professional);
-			appointment.setService(service);
+			appointment.setBusinessService(businessService);
 			appointment.setSubsidiary(subsidiary);
 			appointment.setCompany(company);
 			appointment.setStartTime(LocalDateTime.now().plusDays(1));

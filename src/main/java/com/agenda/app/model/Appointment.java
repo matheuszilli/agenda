@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "appointments",
@@ -27,7 +28,7 @@ public class Appointment extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "service_id", nullable = false)
-    private Service service;
+    private BusinessService businessService;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subsidiary_id")
@@ -53,4 +54,21 @@ public class Appointment extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_order_id")
     private ServiceOrder serviceOrder;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "main_doctor_id")
+    private Professional mainDoctor;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name="appointment_assistants",
+            joinColumns = @JoinColumn(name = "appointment_id"),
+            inverseJoinColumns = @JoinColumn(name = "professional_id")
+    )
+    private List<Professional> assistantDoctors;
+
+//  Pensar se uma comanda pode ter mais de um agendamento ou não. Caso possa, habilitar essa regra
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "service_order_id")
+//    private ServiceOrder serviceOrder;
 }
