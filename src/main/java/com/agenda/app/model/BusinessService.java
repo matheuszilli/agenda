@@ -26,11 +26,11 @@ public class BusinessService extends BaseEntity {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
-    @Column(name = "duration_minutes", nullable = false)
-    private Integer durationInMinutes;
-
     @Column(name = "requires_pre_payment", nullable = false)
     private boolean requiresPrePayment;
+
+    @Column(nullable = false)
+    private Integer durationMinutes;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "company_id", nullable = false)

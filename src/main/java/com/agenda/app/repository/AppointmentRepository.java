@@ -1,12 +1,14 @@
 package com.agenda.app.repository;
 
 import com.agenda.app.model.AppointmentStatus;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.agenda.app.model.Appointment;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -20,6 +22,9 @@ import java.util.UUID;
 
 
 public interface AppointmentRepository extends JpaRepository<Appointment, UUID> {
+
+    @EntityGraph(attributePaths = {"customer", "professional", "businessService", "subsidiary"})
+    Page<Appointment> findAll(Pageable pageable);
 
     List<Appointment> findByProfessionalIdAndStartTimeAfterAndEndTimeBefore(
             UUID professionalId,
@@ -66,4 +71,31 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
 
 
 
+
+    @Query("""
+    SELECT COUNT(a) > 0
+      FROM Appointment a
+     WHERE a.professional.id = :professionalId
+       AND a.subsidiary.id  <> :subsidiaryId
+       AND a.startTime      <  :end
+       AND a.endTime        >  :start
+""")
+    boolean existsOverlapInOtherSubsidiary(UUID professionalId,
+                                           UUID subsidiaryId,
+                                           LocalDateTime start,
+                                           LocalDateTime end);
+
+
+    @Query("""
+        SELECT a
+          FROM Appointment a
+         WHERE a.status = com.agenda.app.model.AppointmentStatus.PENDING
+           AND a.businessService.requiresPrePayment = true
+           AND a.startTime BETWEEN :now AND :deadline
+    """)
+    List<Appointment> findPendingAppointmentsWithin2Days(@Param("now")      LocalDateTime now,
+                                                         @Param("deadline") LocalDateTime deadline);
 }
+
+
+
