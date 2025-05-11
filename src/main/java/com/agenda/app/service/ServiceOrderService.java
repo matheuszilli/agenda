@@ -6,6 +6,8 @@ import com.agenda.app.model.ServiceOrder;
 import com.agenda.app.model.ServiceOrderStatus;
 import com.agenda.app.repository.ServiceOrderRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 
 import java.math.BigDecimal;
 

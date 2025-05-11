@@ -39,6 +39,16 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
     );
 
     /**
+     *  Lista de agendamentos IN_PROGESS e COMPLETED com prontuario
+     */
+    @Query("SELECT a FROM Appointment a WHERE " +
+            "(a.status = com.agenda.app.model.AppointmentStatus.ATTENDING " +
+            "OR a.status = com.agenda.app.model.AppointmentStatus.COMPLETED) " +
+            "AND a.serviceOrder IS NOT NULL " +
+            "AND a.id IN (SELECT mr.appointment.id FROM MedicalRecord mr)")
+    List<Appointment> findAppointmentsWithMedicalRecord();
+
+    /**
      *  Lista de agendamentos IN_PROGESS e COMPLETED sem prontuario
      */
     @Query("SELECT a FROM Appointment a WHERE " +

@@ -27,10 +27,8 @@ public class AppointmentService {
     private final PaymentService            paymentService;
     private final AppointmentMapper         mapper;
 
-    /** Faz o agendamento ✅ devolvendo DTO de saída */
     @Transactional
     public AppointmentResponse scheduleAppointment(AppointmentRequest dto) {
-
         Professional prof = professionalRepository.findById(dto.professionalId())
                 .orElseThrow(() -> new IllegalArgumentException("Professional not found"));
         Customer cust = customerRepository.findById(dto.customerId())
@@ -67,7 +65,7 @@ public class AppointmentService {
         appt.setStatus(determineStatus(appt, dto.paymentId()));
 
         appointmentRepository.save(appt);
-        return mapper.toResponse(appt);          // <<== devolve DTO de saída
+        return mapper.toResponse(appt);
     }
 
     private AppointmentStatus determineStatus(Appointment appt, /* pode ser null */ UUID paymentId) {
@@ -91,6 +89,12 @@ public class AppointmentService {
             return confirmed ? AppointmentStatus.CONFIRMED : AppointmentStatus.NOT_CONFIRMED;
         } else {
             return confirmed ? AppointmentStatus.CONFIRMED : AppointmentStatus.NOT_CONFIRMED;
+        }
+    }
+
+    private void require(Object value, String message){
+        if (value == null) {
+            throw new IllegalArgumentException(message);
         }
     }
 }

@@ -11,6 +11,7 @@ public record AppointmentResponse(
         String professionalId,
         String customerId,
         String subsidiaryId,
+        String companyId,
         String serviceId,
         LocalDateTime startTime,
         LocalDateTime endTime,

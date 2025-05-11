@@ -10,9 +10,9 @@ public class MedicalRecordNote extends BaseEntity {
     @JoinColumn(name = "record_id", nullable = false)
     private MedicalRecord medicalRecord;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id", nullable = false)
-    private User author;
+    @ManyToOne
+    @JoinColumn(name = "professional_id", nullable = false)
+    private Professional professional;
 
     @Column(name = "content", nullable = false, length = 1000)
     private String content;

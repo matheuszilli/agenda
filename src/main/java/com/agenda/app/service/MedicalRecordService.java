@@ -4,7 +4,7 @@ import com.agenda.app.model.MedicalRecord;
 import com.agenda.app.model.User;
 import com.agenda.app.repository.MedicalRecordRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

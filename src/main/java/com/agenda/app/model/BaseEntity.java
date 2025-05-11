@@ -36,6 +36,12 @@ public abstract class BaseEntity {
     @Column(name = "updated_by")
     private String updatedBy;
 
+    @Column(name = "is_active", nullable = false)
+    private boolean isActive = true;
+
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
+
     @Version
     private Long version;
 }
