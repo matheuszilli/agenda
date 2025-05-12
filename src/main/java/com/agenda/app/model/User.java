@@ -45,7 +45,7 @@ public class User extends BaseEntity {
     @Column(length = 20)
     private String document;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id")
+    @ManyToOne
+    @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 }

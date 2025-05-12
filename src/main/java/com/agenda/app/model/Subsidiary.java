@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "subsidiaries")
@@ -19,8 +21,8 @@ public class Subsidiary extends BaseEntity {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(length = 255)
-    private String address;
+    @Embedded
+    private Address address;
 
     @Column(name="open_time", nullable=false)
     private LocalTime openTime;
@@ -28,9 +30,15 @@ public class Subsidiary extends BaseEntity {
     @Column(name="close_time", nullable=false)
     private LocalTime closeTime;
 
-    @Column(name="days_open", nullable=false)
-    private SubsidiaryDaysOpen daysOpen;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "day_open")
+    private Set<SubsidiaryDaysOpen> daysOpen = new HashSet<>();
 
+
+    @NotBlank
+    @Column(name = "document_number", length = 20)
+    private String documentNumber;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "company_id", nullable = false)
