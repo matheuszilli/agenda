@@ -1,12 +1,11 @@
 package com.agenda.app.repository;
 
-import com.agenda.app.model.BusinessService;
+import com.agenda.app.model.Item;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
-import java.util.List;
 
-public interface BusinessServiceRepository extends JpaRepository<BusinessService, UUID> {
+public interface ItemRepository extends JpaRepository<Item, UUID> {
 
     boolean existsByNameIgnoreCaseAndCompanyId(
             String name,

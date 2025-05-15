@@ -9,7 +9,7 @@ Agenda MVP is a comprehensive appointment scheduling solution designed for medic
 ### Key Features
 
 - Schedule appointments with validation for availability
-- Support for multiple subsidiaries (clinic locations) 
+- Support for multiple subsidiaries (clinic locations)
 - Professional availability management
 - Pre-payment requirements for appointments within 2 days
 - Appointment status tracking (PENDING, CONFIRMED, NOT_CONFIRMED, etc.)
@@ -21,8 +21,11 @@ Agenda MVP is a comprehensive appointment scheduling solution designed for medic
 
 - Java 21
 - Maven 3.8+
+- Docker and Docker Compose (optional, for PostgreSQL setup)
 
 ### Development Setup
+
+#### Option 1: Using H2 In-Memory Database (Quick Start)
 
 ```bash
 # Clone the repository
@@ -32,24 +35,71 @@ cd app
 # Build the project
 ./mvnw clean install
 
-# Run the application (uses H2 in-memory database by default)
+# Run the application with the default H2 configuration
 ./mvnw spring-boot:run
 ```
 
-### Database
+#### Option 2: Using PostgreSQL (Recommended for Testing)
 
-The application uses H2 in-memory database for development and testing. The H2 console is enabled by default and can be accessed at:
+```bash
+# Clone the repository
+git clone https://github.com/matheuszilli/app.git
+cd app
+
+# Start PostgreSQL container
+docker-compose up -d
+
+# Build the project
+./mvnw clean install
+
+# Run the application with the PostgreSQL configuration
+./mvnw spring-boot:run -Dspring.profiles.active=dev
+```
+
+### Database Configuration
+
+#### H2 In-Memory Database
+
+The application uses H2 in-memory database by default. The H2 console is enabled and can be accessed at:
 
 ```
 http://localhost:8080/h2-console
 ```
 
-Default credentials:
+Default H2 credentials:
 - JDBC URL: `jdbc:h2:mem:testdb`
-- Username: `sa`
-- Password: (empty)
+- Username: `agenda_user`
+- Password: `changeit`
 
-For production, PostgreSQL is supported - see [Deployment Guide](./docs/Deploy.md) for details.
+#### PostgreSQL Database (via Docker)
+
+The project includes a Docker Compose configuration for PostgreSQL:
+
+```bash
+# Start PostgreSQL container
+docker-compose up -d
+
+# Check if the container is running
+docker ps
+```
+
+PostgreSQL connection details:
+- Host: `localhost`
+- Port: `5432`
+- Database: `agenda`
+- Username: `agenda_user`
+- Password: `changeit`
+
+To stop the PostgreSQL container:
+```bash
+docker-compose down
+```
+
+To persist data between restarts, the docker-compose configuration includes a volume for PostgreSQL data.
+
+## Entity Relationship Diagram
+
+For detailed information about the database structure, see the [Database Documentation](./docs/DataSeed.md).
 
 ## Documentation
 
@@ -57,7 +107,7 @@ For production, PostgreSQL is supported - see [Deployment Guide](./docs/Deploy.m
 - [Domain Model](./docs/DomainModel.md)
 - [Business Rules](./docs/BusinessRules.md)
 - [API Reference](./docs/API.md)
-- [Data Seed Guide](./docs/DataSeed.md)
+- [Database Documentation](./docs/DataSeed.md)
 - [Developer Guide](./docs/DevGuide.md)
 - [Deployment Guide](./docs/Deploy.md)
 - [Roadmap](./docs/Roadmap.md)

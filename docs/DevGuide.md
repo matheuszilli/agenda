@@ -68,6 +68,10 @@ The project uses Maven for dependency management and build automation.
 
 ## Running Tests
 
+### Test Configuration
+
+The application uses JUnit 5 and Spring Boot Test for testing. Tests are configured to run with an H2 in-memory database by default, which is automatically set up for each test suite.
+
 ### Running All Tests
 
 ```bash
@@ -86,6 +90,92 @@ The project uses Maven for dependency management and build automation.
 ./mvnw test -Dtest=AppointmentServiceTest#testScheduleAppointment
 ```
 
+### Running Tests with Different Spring Profiles
+
+You can run tests with specific Spring profiles to test different configurations:
+
+```bash
+./mvnw test -Dspring.profiles.active=test
+```
+
+### Test Coverage Report
+
+To generate a test coverage report:
+
+```bash
+./mvnw verify
+```
+
+The coverage report will be available in `target/site/jacoco/index.html`.
+
+## Manual Testing Setup
+
+For manual testing and development, follow these steps to set up a suitable environment:
+
+### Option 1: Testing with H2 In-Memory Database
+
+1. **Start the application with H2:**
+   ```bash
+   ./mvnw spring-boot:run
+   ```
+
+2. **Access the H2 Console:**
+   Open your browser and go to:
+   ```
+   http://localhost:8080/h2-console
+   ```
+
+3. **Configure H2 connection:**
+   - JDBC URL: `jdbc:h2:mem:testdb`
+   - Username: `agenda_user`
+   - Password: `changeit`
+
+4. **Create test data:**
+   Use the SQL examples provided in [Database Documentation](./DataSeed.md) to populate the database with test data.
+
+### Option 2: Testing with PostgreSQL (Recommended for Integration Testing)
+
+1. **Start PostgreSQL container:**
+   ```bash
+   docker-compose up -d
+   ```
+
+2. **Start the application with the dev profile:**
+   ```bash
+   ./mvnw spring-boot:run -Dspring.profiles.active=dev
+   ```
+
+3. **Connect to PostgreSQL (optional):**
+   ```bash
+   docker exec -it agenda-pg psql -U agenda_user -d agenda
+   ```
+
+4. **Create test data:**
+   You can use the SQL scripts from [Database Documentation](./DataSeed.md) directly in the PostgreSQL console, or create a DataSeedConfig class as described in the same document.
+
+## API Testing
+
+To test the REST API endpoints:
+
+1. **Using cURL:**
+   ```bash
+   # Example: Create a new business service
+   curl -X POST http://localhost:8080/api/services \
+     -H "Content-Type: application/json" \
+     -d '{"name":"New Service","description":"Description","price":100.00,"durationMinutes":30,"companyId":"company-uuid-here"}'
+
+   # Example: Get all appointments
+   curl -X GET http://localhost:8080/api/appointments
+   ```
+
+2. **Using Postman:**
+   Import the provided Postman collection (if available) or create a new collection with the following request examples:
+
+   - GET `/api/appointments` - List all appointments
+   - POST `/api/appointments` - Create a new appointment
+   - GET `/api/services` - List available services
+   - POST `/api/services` - Create a new service
+
 ## Database Configuration
 
 ### H2 Console
@@ -98,8 +188,24 @@ http://localhost:8080/h2-console
 
 Default connection details:
 - JDBC URL: `jdbc:h2:mem:testdb`
-- Username: `sa`
-- Password: (empty)
+- Username: `agenda_user`
+- Password: `changeit`
+
+### PostgreSQL Configuration
+
+The application can be configured to use PostgreSQL as follows:
+
+1. **Start PostgreSQL container:**
+   ```bash
+   docker-compose up -d
+   ```
+
+2. **Connection details:**
+   - Host: `localhost`
+   - Port: `5432`
+   - Database: `agenda`
+   - Username: `agenda_user`
+   - Password: `changeit`
 
 ### Database Schema Management
 
@@ -113,6 +219,37 @@ Configure this in `application.properties`:
 ```properties
 spring.jpa.hibernate.ddl-auto=update
 ```
+
+## Troubleshooting Common Issues
+
+### Database Connection Issues
+
+If you encounter errors connecting to the database:
+
+1. **For H2:**
+   - Check that the JDBC URL matches the configuration in `application.properties`
+   - Verify the H2 console is enabled with `spring.h2.console.enabled=true`
+
+2. **For PostgreSQL:**
+   - Ensure the Docker container is running: `docker ps`
+   - Verify connection properties in `application-dev.yml`
+   - Test connection directly: `psql -h localhost -U agenda_user -d agenda`
+
+### Test Data Issues
+
+If test data is not being seeded properly:
+
+1. Check if the `DataSeedConfig` class is correctly configured
+2. Verify the correct profile is active
+3. Examine the application logs for any errors during data seeding
+
+### API Errors
+
+For API errors:
+
+1. Check the request format against the expected DTO structure
+2. Verify that required fields are included and valid
+3. Look for validation error messages in the response body
 
 ## Spring Profiles
 

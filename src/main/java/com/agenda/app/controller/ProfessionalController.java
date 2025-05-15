@@ -1,7 +1,7 @@
 package com.agenda.app.controller;
 
 import com.agenda.app.dto.*;
-import com.agenda.app.service.BusinessServiceService;
+import com.agenda.app.service.ProfessionalService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
@@ -10,31 +10,30 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/services")
+@RequestMapping("/professionals")
 @RequiredArgsConstructor
-public class BusinessServiceController {
+public class ProfessionalController {
 
-    private final BusinessServiceService service;
+    private final ProfessionalService service;
 
     @PostMapping
-    public ResponseEntity<BusinessServiceResponse> create(
-            @RequestBody @Valid BusinessServiceRequest body) {
-        var respoense = service.create(body);
+    public ResponseEntity<ProfessionalResponse> create(
+            @RequestBody @Valid ProfessionalRequest body) {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(respoense);
+                .body(service.create(body));
     }
 
     @GetMapping("/{id}")
-    public BusinessServiceResponse get(@PathVariable UUID id) {
+    public ProfessionalResponse get(@PathVariable UUID id) {
         return service.get(id);
     }
 
     @PutMapping("/{id}")
-    public BusinessServiceResponse update(
+    public ProfessionalResponse update(
             @PathVariable UUID id,
-            @RequestBody @Valid BusinessServiceRequest body) {
+            @RequestBody @Valid ProfessionalRequest body) {
         return service.update(id, body);
     }
 

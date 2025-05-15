@@ -32,7 +32,7 @@ public class MedicalRecord extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "service_id", nullable = false)
-    private BusinessService businessService;
+    private Item item;
 
     @Column(name = "description", length = 1000)
     private String description;

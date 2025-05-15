@@ -3,7 +3,7 @@ package com.agenda.app.dto;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public record BusinessServiceResponse(
+public record ItemResponse(
     UUID id,
     String name,
     String description,

@@ -28,7 +28,7 @@ public class ServiceOrder extends BaseEntity {
     @JoinTable(name = "service_order_services",
             joinColumns = @JoinColumn(name = "service_order_id"),
             inverseJoinColumns = @JoinColumn(name = "service_id"))
-    private List<BusinessService> businessServices = new ArrayList<>();
+    private List<Item> items = new ArrayList<>();
 
     @Column(name = "status", nullable = false, length = 20)
     private ServiceOrderStatus status;

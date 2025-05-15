@@ -42,13 +42,16 @@ public class Customer extends BaseEntity {
     @Column(name = "document_number", length = 20)
     private String documentNumber;
 
-    @NotBlank
-    @Column(name = "address", length = 255)
-    private String address;
+    @Embedded
+    private Address address;
 
     @Past
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
+
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
 
     @PrePersist @PreUpdate
     private void buildFullName() {

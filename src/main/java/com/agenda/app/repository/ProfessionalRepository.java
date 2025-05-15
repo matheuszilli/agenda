@@ -14,4 +14,8 @@ import java.util.UUID;
  */
 
 public interface ProfessionalRepository extends JpaRepository<Professional, UUID> {
+
+    boolean existsByDocumentNumberIgnoreCase(String documentNumber);
+    boolean existsByEmailIgnoreCase(String email);
+
 }

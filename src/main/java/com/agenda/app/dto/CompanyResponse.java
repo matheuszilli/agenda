@@ -4,11 +4,11 @@ import lombok.Data;
 
 import java.util.UUID;
 
-@Data
-public class CompanyResponse {
-    private UUID id;
-    private String name;
-    private AddressResponse address;   // << era String
-    private String phone;
-    private String documentNumber;
-}
+
+public record CompanyResponse(
+    UUID id,
+    String name,
+    AddressResponse address,   // << era String
+    String phone,
+    String documentNumber
+    ) {}

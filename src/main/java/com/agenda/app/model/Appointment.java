@@ -26,9 +26,13 @@ public class Appointment extends BaseEntity {
     @JoinColumn(name = "professional_id", nullable = false)
     private Professional professional;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chair_room_id")
+    private ChairRoom chairRoom;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "service_id", nullable = false)
-    private BusinessService businessService;
+    private Item item;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subsidiary_id")

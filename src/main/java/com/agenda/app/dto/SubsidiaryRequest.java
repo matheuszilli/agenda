@@ -10,9 +10,6 @@ import java.util.UUID;
 public record SubsidiaryRequest(
         @NotBlank String name,
         @NotNull  Address address,
-        @NotNull  LocalTime openTime,
-        @NotNull  LocalTime closeTime,
-        @NotEmpty Set<SubsidiaryDaysOpen> daysOpen,
         @NotBlank String documentNumber,
         @NotNull  UUID companyId
 ) {}

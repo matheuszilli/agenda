@@ -2,7 +2,7 @@ package com.agenda.app.service;
 
 
 import com.agenda.app.exception.PaymentRequiredException;
-import com.agenda.app.model.BusinessService;
+import com.agenda.app.model.Item;
 import com.agenda.app.model.Payment;
 import com.agenda.app.model.PaymentStatus;
 import com.agenda.app.repository.PaymentRepository;
@@ -25,11 +25,11 @@ public class PaymentService {
      */
 
     @Transactional(readOnly = true)
-    public Payment verifyPrePaymentIfWithinWindow(BusinessService businessService,
+    public Payment verifyPrePaymentIfWithinWindow(Item item,
                                                   LocalDateTime startTime,
                                                   UUID paymentId) {
 
-        if (!businessService.isRequiresPrePayment()) {
+        if (!item.isRequiresPrePayment()) {
             return null;
         }
 

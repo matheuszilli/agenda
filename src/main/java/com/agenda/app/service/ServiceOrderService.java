@@ -1,15 +1,15 @@
 package com.agenda.app.service;
 
+import com.agenda.app.model.Item;
 import lombok.RequiredArgsConstructor;
-import com.agenda.app.model.BusinessService;
 import com.agenda.app.model.ServiceOrder;
 import com.agenda.app.model.ServiceOrderStatus;
 import com.agenda.app.repository.ServiceOrderRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 
 import java.math.BigDecimal;
+import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
@@ -18,15 +18,15 @@ public class ServiceOrderService {
     private final ServiceOrderRepository serviceOrderRepository;
 
     public ServiceOrder createServiceOrder(ServiceOrder serviceOrder){
-        require(serviceOrder.getBusinessServices(), "Service is required");
+        require(serviceOrder.getItems(), "Service is required");
         require(serviceOrder.getCustomer(), "Customer is required");
         require(serviceOrder.getProfessional(), "Professional is required");
         require(serviceOrder.getStatus(), "Status is required");
 
 
         // Calcula o total somando os preços dos serviços
-        BigDecimal total = serviceOrder.getBusinessServices().stream()
-                .map(BusinessService::getPrice)
+        BigDecimal total = serviceOrder.getItems().stream()
+                .map(Item::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // Aplica o desconto, se houver
@@ -35,8 +35,8 @@ public class ServiceOrderService {
 
 
 
-        boolean alreadyExists = serviceOrderRepository.existsByCustomerAndBusinessServicesInAndProfessional(
-                serviceOrder.getCustomer(), serviceOrder.getBusinessServices(), serviceOrder.getProfessional()
+        boolean alreadyExists = serviceOrderRepository.existsByCustomerAndItemsInAndProfessional(
+                serviceOrder.getCustomer(), serviceOrder.getItems(), serviceOrder.getProfessional()
         );
 
         if(alreadyExists){

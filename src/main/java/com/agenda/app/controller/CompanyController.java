@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -26,6 +27,12 @@ public class CompanyController {
 
     @GetMapping("/{id}")
     public CompanyResponse get(@PathVariable UUID id) { return service.get(id); }
+
+    @GetMapping
+    public ResponseEntity<List<CompanyResponse>> getAll(@RequestParam(required = false) String name) {
+        var res = service.getAll(name);
+        return ResponseEntity.ok(res);
+    }
 
     @PutMapping("/{id}")
     public CompanyResponse update(@PathVariable UUID id,

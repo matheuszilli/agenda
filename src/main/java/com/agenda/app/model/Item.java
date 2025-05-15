@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @Table(name = "services")
 @Getter @Setter @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class BusinessService extends BaseEntity {
+public class Item extends BaseEntity {
 
     @NotBlank
     @Column(nullable = false, length = 100)

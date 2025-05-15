@@ -6,8 +6,9 @@ import com.agenda.app.model.User;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface UserRepository<UUID> extends JpaRepository<User, UUID> {
+public interface UserRepository extends JpaRepository<User, UUID> {
 
     Optional<User> findByUsername(String username);
     Optional<User> findByEmail(String email);

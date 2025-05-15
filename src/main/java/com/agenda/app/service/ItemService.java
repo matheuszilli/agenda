@@ -1,12 +1,12 @@
 package com.agenda.app.service;
 
 
-import com.agenda.app.dto.BusinessServiceRequest;
-import com.agenda.app.dto.BusinessServiceResponse;
-import com.agenda.app.mapper.BusinessServiceMapper;
-import com.agenda.app.model.BusinessService;
+import com.agenda.app.dto.ItemRequest;
+import com.agenda.app.dto.ItemResponse;
+import com.agenda.app.mapper.ItemMapper;
+import com.agenda.app.model.Item;
 import com.agenda.app.model.Company;
-import com.agenda.app.repository.BusinessServiceRepository;
+import com.agenda.app.repository.ItemRepository;
 import com.agenda.app.repository.CompanyRepository;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,42 +16,42 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class BusinessServiceService {
+public class ItemService {
 
-    private final BusinessServiceRepository businessServiceRepository;
+    private final ItemRepository itemRepository;
     private final CompanyRepository companyRepository;
-    private final BusinessServiceMapper mapper;
+    private final ItemMapper mapper;
 
     // --- AQUI CRIA O SERVIÇO - AS REGRA PRA CRIAR E VALIDAR O SERVIÇO
     @Transactional
-    public BusinessServiceResponse create(BusinessServiceRequest dto){
+    public ItemResponse create(ItemRequest dto){
 
-        if(businessServiceRepository.existsByNameIgnoreCaseAndCompanyId(dto.name(), dto.companyId())){
+        if(itemRepository.existsByNameIgnoreCaseAndCompanyId(dto.name(), dto.companyId())){
             throw new IllegalArgumentException("Service already exists");
         }
 
         Company company = companyRepository.findById(dto.companyId())
                 .orElseThrow(() -> new IllegalArgumentException("Company not found"));
 
-        BusinessService entity = mapper.toEntity(dto);
+        Item entity = mapper.toEntity(dto);
         entity.setCompany(company);
 
-        businessServiceRepository.save(entity);
+        itemRepository.save(entity);
         return mapper.toResponse(entity);
     }
 
     // --- AQUI LE O SERVIÇO
     @Transactional(readOnly = true)
-    public BusinessServiceResponse get(UUID id) {
-        return businessServiceRepository.findById(id)
+    public ItemResponse get(UUID id) {
+        return itemRepository.findById(id)
                 .map(mapper::toResponse)
                 .orElseThrow(() -> new IllegalArgumentException("Service not found"));
     }
 
     // - UPDATE
     @Transactional
-    public BusinessServiceResponse update(UUID id, BusinessServiceRequest dto) {
-        BusinessService entity = businessServiceRepository.findById(id)
+    public ItemResponse update(UUID id, ItemRequest dto) {
+        Item entity = itemRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Service not found"));
 
         //sobrescrever campos
@@ -63,16 +63,16 @@ public class BusinessServiceService {
         entity.setActive(dto.active());
         entity.setRequiresPrePayment(dto.requiresPrePayment());
 
-        businessServiceRepository.save(entity);
+        itemRepository.save(entity);
         return mapper.toResponse(entity);
     }
 
     // - DELETE
     @Transactional
     public void delete(UUID id) {
-        BusinessService entity = businessServiceRepository.findById(id)
+        Item entity = itemRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Service not found"));
-        businessServiceRepository.delete(entity);
+        itemRepository.delete(entity);
     }
 
 }

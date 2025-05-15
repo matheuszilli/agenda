@@ -35,7 +35,7 @@ public class MedicalRecordService {
 
         newRecord.setCreatedBy(currentUser);
         newRecord.setCustomer(newRecord.getAppointment().getCustomer());
-        newRecord.setBusinessService(newRecord.getAppointment().getBusinessService());
+        newRecord.setItem(newRecord.getAppointment().getItem());
         newRecord.setFinalized(false);
 
         return medicalRecordRepository.save(newRecord);

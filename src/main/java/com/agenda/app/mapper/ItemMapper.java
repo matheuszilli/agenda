@@ -1,17 +1,17 @@
-// src/main/java/com/agenda/app/mapper/BusinessServiceMapper.java
+// src/main/java/com/agenda/app/mapper/ItemMapper.java
 package com.agenda.app.mapper;
 
 import com.agenda.app.dto.*;
-import com.agenda.app.model.BusinessService;
+import com.agenda.app.model.Item;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
-public interface BusinessServiceMapper {
+public interface ItemMapper {
 
     @Mapping(source = "company.id", target = "companyId")
-    BusinessServiceResponse toResponse(BusinessService entity);
+    ItemResponse toResponse(Item entity);
 
     @InheritInverseConfiguration
     @Mapping(target = "id", ignore = true) // id é gerado
-    BusinessService toEntity(BusinessServiceRequest dto);
+    Item toEntity(ItemRequest dto);
 }

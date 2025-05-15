@@ -24,16 +24,8 @@ public class Subsidiary extends BaseEntity {
     @Embedded
     private Address address;
 
-    @Column(name="open_time", nullable=false)
-    private LocalTime openTime;
-
-    @Column(name="close_time", nullable=false)
-    private LocalTime closeTime;
-
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Enumerated(EnumType.STRING)
-    @Column(name = "day_open")
-    private Set<SubsidiaryDaysOpen> daysOpen = new HashSet<>();
+    @OneToMany(mappedBy = "subsidiary", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<SubsidiaryScheduleEntry> scheduleEntries = new HashSet<>();
 
 
     @NotBlank

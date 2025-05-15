@@ -13,14 +13,10 @@ public interface SubsidiaryMapper {
     /* entity -> response */
     @Mapping(source = "company.id", target = "companyId")
     SubsidiaryResponse toResponse(Subsidiary entity);
-
     /* request -> entity (create) */
     @Mapping(target = "id", ignore = true)
     @Mapping(source = "dto.name",           target = "name")
     @Mapping(source = "dto.address",        target = "address")
-    @Mapping(source = "dto.openTime",       target = "openTime")
-    @Mapping(source = "dto.closeTime",      target = "closeTime")
-    @Mapping(source = "dto.daysOpen",       target = "daysOpen")
     @Mapping(source = "dto.documentNumber", target = "documentNumber")
     @Mapping(target = "company", expression = "java(company)")
     Subsidiary toEntity(SubsidiaryRequest dto, Company company);

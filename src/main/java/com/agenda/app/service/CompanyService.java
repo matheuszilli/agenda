@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -22,6 +23,9 @@ public class CompanyService {
     /* CREATE */
     @Transactional
     public CompanyResponse create(CompanyRequest dto) {
+        if (repo.existsByName(dto.name())) {
+            throw new IllegalArgumentException("Company with name %s already exists".formatted(dto.name()));
+        }
         Company entity = mapper.toEntity(dto);
         repo.save(entity);
         return mapper.toResponse(entity);
@@ -33,6 +37,14 @@ public class CompanyService {
         Company entity = repo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Company %s not found".formatted(id)));
         return mapper.toResponse(entity);
+    }
+    @Transactional(readOnly = true)
+    public List<CompanyResponse> getAll(String name) {
+        if (name == null || name.isBlank()) {
+            return mapper.toResponseList(repo.findAll());
+        } else {
+            return mapper.toResponseList(repo.findByNameContainingIgnoreCase(name));
+        }
     }
 
     /* UPDATE (PUT) */

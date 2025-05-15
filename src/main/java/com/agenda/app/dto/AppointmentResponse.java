@@ -12,7 +12,7 @@ public record AppointmentResponse(
         String customerId,
         String subsidiaryId,
         String companyId,
-        String serviceId,
+        String itemId,
         LocalDateTime startTime,
         LocalDateTime endTime,
         AppointmentStatus status

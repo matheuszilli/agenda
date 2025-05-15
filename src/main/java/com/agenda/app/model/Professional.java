@@ -9,6 +9,8 @@ import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "professionals",
@@ -39,9 +41,8 @@ public class Professional extends BaseEntity {
     @Column(name = "document_number", length = 20)
     private String documentNumber;
 
-    @NotBlank
-    @Column(name = "address", length = 255)
-    private String address;
+    @Embedded
+    private Address address;
 
     @Column(name = "phone", length = 20)
     private String phone;
@@ -50,11 +51,13 @@ public class Professional extends BaseEntity {
     @Column(name = "email", nullable = false, length = 100)
     private String email;
 
-    @Column(name="available_start", nullable=false)
-    private LocalTime availableStart;
+    @OneToMany(mappedBy = "professional", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ProfessionalScheduleEntry> scheduleEntries = new HashSet<>();
 
-    @Column(name="available_end", nullable=false)
-    private LocalTime availableEnd;
+    @OneToMany(mappedBy = "professional",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private Set<ProfessionalServiceCfg> serviceConfigs = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name="subsidiary_id")

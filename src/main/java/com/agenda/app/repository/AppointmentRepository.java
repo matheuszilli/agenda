@@ -23,7 +23,7 @@ import java.util.UUID;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, UUID> {
 
-    @EntityGraph(attributePaths = {"customer", "professional", "businessService", "subsidiary"})
+    @EntityGraph(attributePaths = {"customer", "professional", "item", "subsidiary"})
     Page<Appointment> findAll(Pageable pageable);
 
     List<Appointment> findByProfessionalIdAndStartTimeAfterAndEndTimeBefore(
@@ -100,7 +100,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
         SELECT a
           FROM Appointment a
          WHERE a.status = com.agenda.app.model.AppointmentStatus.PENDING
-           AND a.businessService.requiresPrePayment = true
+           AND a.item.requiresPrePayment = true
            AND a.startTime BETWEEN :now AND :deadline
     """)
     List<Appointment> findPendingAppointmentsWithin2Days(@Param("now")      LocalDateTime now,

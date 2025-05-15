@@ -4,6 +4,8 @@ import com.agenda.app.dto.*;
 import com.agenda.app.model.Company;
 import org.mapstruct.*;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface CompanyMapper {
 
@@ -17,4 +19,6 @@ public interface CompanyMapper {
     /* PUT ↔ atualizar entity existente */
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDto(CompanyRequest dto, @MappingTarget Company entity);
+
+    List<CompanyResponse> toResponseList(List<Company> entities);
 }
