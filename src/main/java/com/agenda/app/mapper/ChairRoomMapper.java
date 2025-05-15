@@ -7,7 +7,7 @@ import com.agenda.app.model.Subsidiary;
 import org.mapstruct.*;
 
 
-
+@Mapper(componentModel = "spring")
 public interface ChairRoomMapper {
 
     /* ---------- entity → response ---------- */

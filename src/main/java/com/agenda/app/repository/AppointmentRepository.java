@@ -1,5 +1,6 @@
 package com.agenda.app.repository;
 
+import com.agenda.app.dto.AppointmentResponse;
 import com.agenda.app.model.AppointmentStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -31,6 +32,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
             LocalDateTime startTime,
             LocalDateTime endTime
     );
+
+    Page<Appointment> findByStatusIn(List<AppointmentStatus> statuses, Pageable pageable);
 
     List<Appointment> findByCustomerIdAndStartTimeBetween(
             UUID customerId,

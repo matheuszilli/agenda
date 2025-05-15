@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -140,4 +141,26 @@ public class AppointmentService {
             return confirmed ? AppointmentStatus.CONFIRMED : AppointmentStatus.NOT_CONFIRMED;
         }
     }
+
+    @Transactional
+    public void cancelAppointment(UUID id) {
+        Appointment appt = appointmentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Appointment not found: " + id));
+        appt.setStatus(AppointmentStatus.CANCELLED); // se você tiver esse status
+        appointmentRepository.save(appt);
+    }
+
+
+    public Page<AppointmentResponse> getAgendaAppointments(Pageable pageable) {
+        List<AppointmentStatus> visibleStatuses = List.of(
+                AppointmentStatus.CONFIRMED,
+                AppointmentStatus.NOT_CONFIRMED,
+                AppointmentStatus.PENDING
+        );
+
+        return appointmentRepository.findByStatusIn(visibleStatuses, pageable)
+                .map(mapper::toResponse);
+    }
+
+
 }

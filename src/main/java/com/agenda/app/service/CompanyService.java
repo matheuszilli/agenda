@@ -23,8 +23,8 @@ public class CompanyService {
     /* CREATE */
     @Transactional
     public CompanyResponse create(CompanyRequest dto) {
-        if (repo.existsByName(dto.name())) {
-            throw new IllegalArgumentException("Company with name %s already exists".formatted(dto.name()));
+        if (repo.existsByName(dto.getName())) {
+            throw new IllegalArgumentException("Company with name %s already exists".formatted(dto.getName()));
         }
         Company entity = mapper.toEntity(dto);
         repo.save(entity);

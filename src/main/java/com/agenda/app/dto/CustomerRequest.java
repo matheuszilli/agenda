@@ -23,7 +23,7 @@ public class CustomerRequest {
     @NotNull
     private AddressRequest address;
     @NotNull
-    private UUID company;
+    private UUID companyId;
     
 
 }

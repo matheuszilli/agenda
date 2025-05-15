@@ -44,6 +44,12 @@ public class AppointmentController {
         return ResponseEntity.ok(resp);
     }
 
+    @GetMapping("/agenda")
+    public ResponseEntity<Page<AppointmentResponse>> getAgenda(Pageable pageable) {
+        Page<AppointmentResponse> page = service.getAgendaAppointments(pageable);
+        return ResponseEntity.ok(page);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<AppointmentResponse> update(
             @PathVariable UUID id,
