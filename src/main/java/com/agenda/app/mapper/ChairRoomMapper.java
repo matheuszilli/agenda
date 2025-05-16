@@ -28,5 +28,4 @@ public interface ChairRoomMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateFromRequest(ChairRoomRequest req, @MappingTarget ChairRoom entity);
 
-
 }

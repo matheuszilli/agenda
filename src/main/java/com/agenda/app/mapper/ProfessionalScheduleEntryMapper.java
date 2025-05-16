@@ -13,4 +13,5 @@ public interface ProfessionalScheduleEntryMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "professional", expression = "java(professional)")
     ProfessionalScheduleEntry toEntity(ProfessionalScheduleEntryRequest dto, @Context Professional professional);
+
 }

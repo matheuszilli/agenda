@@ -29,4 +29,6 @@ public interface ChairRoomRepository extends JpaRepository<ChairRoom, UUID> {
             @Param("subsidiaryId") UUID subsidiaryId,
             @Param("startTime") LocalDateTime startTime,
             @Param("endTime") LocalDateTime endTime);
+
+
 }

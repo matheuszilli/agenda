@@ -34,4 +34,10 @@ public class SubsidiaryScheduleEntry extends BaseEntity {
 
     @Column(name = "customized", nullable = false)
     private boolean customized = false;
+
+    public SubsidiaryScheduleEntry(Subsidiary subsidiary, LocalDate date) {
+        this.subsidiary = subsidiary;
+        this.date = date;
+    }
+
 }

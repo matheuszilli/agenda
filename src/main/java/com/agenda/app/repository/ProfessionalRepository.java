@@ -18,4 +18,6 @@ public interface ProfessionalRepository extends JpaRepository<Professional, UUID
     boolean existsByDocumentNumberIgnoreCase(String documentNumber);
     boolean existsByEmailIgnoreCase(String email);
 
+    Optional<Professional> findByDocumentNumberIgnoreCase(String documentNumber);
+
 }

@@ -16,6 +16,10 @@ public class AppointmentRequest{
         private UUID customerId;
         @NotNull
         private UUID professionalId;
+        @NotBlank
+        private String serviceId;
+        @NotBlank
+        private String chairRoomId;
         @NotNull
         private UUID itemId;
         @NotNull

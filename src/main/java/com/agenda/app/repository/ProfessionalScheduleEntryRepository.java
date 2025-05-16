@@ -6,13 +6,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface ProfessionalScheduleEntryRepository extends JpaRepository<ProfessionalScheduleEntry, UUID> {
 
     List<ProfessionalScheduleEntry> findByProfessionalId(UUID professionalId);
 
-    List<ProfessionalScheduleEntry> findByProfessionalIdAndDate(UUID professionalId, LocalDate date);
+    Optional<ProfessionalScheduleEntry> findByProfessionalIdAndDate(UUID professionalId, LocalDate date);
+
+    Optional<ProfessionalScheduleEntry> findFirstByProfessionalIdAndDate(UUID professionalId, LocalDate date);
 
     boolean existsByProfessionalIdAndDate(UUID professionalId, LocalDate date);
 }
