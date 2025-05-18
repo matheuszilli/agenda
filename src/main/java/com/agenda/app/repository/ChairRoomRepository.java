@@ -13,7 +13,6 @@ public interface ChairRoomRepository extends JpaRepository<ChairRoom, UUID> {
 
     List<ChairRoom> findBySubsidiaryId(UUID subsidiaryId);
 
-    List<ChairRoom> findBySubsidiaryIdAndIsAvailable(UUID subsidiaryId, boolean isAvailable);
 
     @Query("SELECT cr FROM ChairRoom cr WHERE cr.subsidiary.id = :subsidiaryId " +
             "AND cr.isAvailable = true " +

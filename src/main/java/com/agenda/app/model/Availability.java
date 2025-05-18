@@ -21,11 +21,15 @@ public class Availability extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "professional_id")
-    private Professional professional; // opcional
+    private Professional professional;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subsidiary_id")
-    private Subsidiary subsidiary; // opcional (ou sala)
+    private Subsidiary subsidiary;
+
+    @ManyToOne
+    @JoinColumn(name = "chair_room_id")
+    private ChairRoom chairRoom;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "day_of_week", nullable = false, length = 10)
