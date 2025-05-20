@@ -1,0 +1,28 @@
+// src/main/java/com/agenda/app/mapper/SubsidiaryMapper.java
+package com.agenda.app.mapper;
+
+import com.agenda.app.dto.SubsidiaryRequest;
+import com.agenda.app.dto.SubsidiaryResponse;
+import com.agenda.app.model.Company;
+import com.agenda.app.model.Subsidiary;
+import org.mapstruct.*;
+
+@Mapper(componentModel = "spring")
+public interface SubsidiaryMapper {
+
+    /* entity -> response */
+    @Mapping(source = "company.id", target = "companyId")
+    SubsidiaryResponse toResponse(Subsidiary entity);
+    /* request -> entity (create) */
+    @Mapping(target = "id", ignore = true)
+    @Mapping(source = "dto.name",           target = "name")
+    @Mapping(source = "dto.address",        target = "address")
+    @Mapping(source = "dto.documentNumber", target = "documentNumber")
+    @Mapping(target = "company", expression = "java(company)")
+    Subsidiary toEntity(SubsidiaryRequest dto, Company company);
+
+    /* merge (update) – dto tem todos campos opcionais */
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "company", ignore = true)
+    void copyNonNullToEntity(SubsidiaryRequest dto, @MappingTarget Subsidiary entity);
+}

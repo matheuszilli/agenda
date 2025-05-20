@@ -1,0 +1,58 @@
+// src/main/java/com/agenda/app/mapper/ProfessionalMapper.java
+package com.agenda.app.mapper;
+
+import com.agenda.app.dto.*;
+import com.agenda.app.model.*;
+import org.mapstruct.*;
+
+@Mapper(componentModel = "spring",
+        unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface ProfessionalMapper {
+
+    /* ---------- entity → response ---------- */
+    @Mapping(source = "subsidiary.id", target = "subsidiaryId")
+    ProfessionalResponse toResponse(Professional entity);
+
+    /* ---------- request → entity (create) ---------- */
+    // --> todos os campos explícitos vêm do DTO
+    @Mapping(target = "id",             ignore = true)
+    @Mapping(target = "fullName",       ignore = true)   // gerado pelo @PrePersist
+    @Mapping(target = "user",           ignore = true)
+    @Mapping(target = "serviceConfigs", ignore = true)
+    @Mapping(target = "subsidiary",     expression = "java(subs)")
+    @Mapping(source = "firstName",           target = "firstName")
+    @Mapping(source = "lastName",            target = "lastName")
+    @Mapping(source = "documentNumber",      target = "documentNumber")
+    @Mapping(source = "address",             target = "address")
+    @Mapping(source = "phone",               target = "phone")
+    @Mapping(source = "email",               target = "email")
+    Professional toEntity(ProfessionalRequest req,
+                          @Context Subsidiary   subs);
+
+    /* ---------- merge (update) ---------- */
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "subsidiary", ignore = true)
+    @Mapping(target = "user",       ignore = true)
+    void copyNonNullToEntity(ProfessionalRequest req,
+                             @MappingTarget Professional entity);
+
+    @Mapper(componentModel = "spring")
+    interface CustomerMapper {
+
+        // entity → response
+        @Mapping(source = "company.id", target = "companyId")
+        CustomerResponse toResponse(Customer entity);
+
+        // request → entity, a service vai buscar a Company e passar como @Context
+        @Mapping(target = "id", ignore = true)
+        @Mapping(source = "req.firstName", target = "firstName")
+        @Mapping(source = "req.lastName",  target = "lastName")
+        @Mapping(source = "req.email",     target = "email")
+        @Mapping(source = "req.phone",     target = "phone")
+        @Mapping(source = "req.documentNumber", target = "documentNumber")
+        @Mapping(source = "req.address",   target = "address")
+        @Mapping(target = "company",       expression = "java(company)")
+        Customer toEntity(CustomerRequest req,
+                          @Context Company company);
+    }
+}
