@@ -9,4 +9,5 @@ import java.util.UUID;
 public interface SubsidiaryRepository extends JpaRepository<Subsidiary, UUID> {
 
     boolean existsByNameIgnoreCaseAndCompanyId(String name, UUID companyId);
+
 }

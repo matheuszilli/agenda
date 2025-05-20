@@ -32,6 +32,8 @@ public class SubsidiaryService {
             throw new IllegalArgumentException("Subsidiary already exists");
         }
 
+
+
         // Buscar empresa relacionada
         Company company = companyRepository.findById(dto.companyId())
                 .orElseThrow(() -> new IllegalArgumentException("Company not found"));

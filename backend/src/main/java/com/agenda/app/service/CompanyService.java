@@ -42,6 +42,11 @@ public class CompanyService {
             throw new IllegalArgumentException("Company with CNPJ %s already exists".formatted(formattedCnpj));
         }
 
+        // Validar que não existe outra empresa com o mesmo prefixo de CNPJ
+        if (repo.existsByDocumentNumberPrefix(formattedCnpj, null)) {
+            throw new IllegalArgumentException("Another company with the same CNPJ prefix already exists. Only one company with the same root is allowed");
+        }
+
         // Atualizar o CNPJ formatado no DTO
         dto.setDocumentNumber(formattedCnpj);
 
@@ -91,6 +96,12 @@ public class CompanyService {
         if (!formattedCnpj.equals(entity.getDocumentNumber()) &&
                 repo.existsByDocumentNumber(formattedCnpj)) {
             throw new IllegalArgumentException("Company with CNPJ %s already exists".formatted(formattedCnpj));
+        }
+
+        // Verificar se o CNPJ está sendo alterado para um prefixo que já existe em outra empresa
+        if (!formattedCnpj.equals(entity.getDocumentNumber()) &&
+                repo.existsByDocumentNumberPrefix(formattedCnpj, id)) {
+            throw new IllegalArgumentException("Another company with the same CNPJ prefix already exists. Only one company with the same root is allowed");
         }
 
         // Atualizar o CNPJ formatado no DTO
