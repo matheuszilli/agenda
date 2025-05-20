@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
+import java.util.List;
 
 @RestController
 @RequestMapping("/subsidiaries")
@@ -27,6 +28,12 @@ public class SubsidiaryController {
     @GetMapping("/{id}")
     public SubsidiaryResponse get(@PathVariable UUID id) {
         return service.get(id);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<SubsidiaryResponse>> listAll() {
+        List<SubsidiaryResponse> subsidiaries = service.listAll();
+        return ResponseEntity.ok(subsidiaries);
     }
 
     @PutMapping("/{id}")

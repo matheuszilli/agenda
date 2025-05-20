@@ -12,7 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -69,6 +71,14 @@ public class SubsidiaryService {
         return subsidiaryRepository.findById(id)
                 .map(mapper::toResponse)
                 .orElseThrow(() -> new IllegalArgumentException("Subsidiary not found"));
+    }
+
+    @Transactional(readOnly = true)
+    public List<SubsidiaryResponse> listAll() {
+        return subsidiaryRepository.findAll()
+                .stream()
+                .map(mapper::toResponse)
+                .collect(Collectors.toList());
     }
 
     /* ======================= UPDATE ======================= */

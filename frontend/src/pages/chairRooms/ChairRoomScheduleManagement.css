@@ -1,0 +1,80 @@
+/* src/pages/chairRooms/ChairRoomScheduleManagement.css */
+.chair-room-schedule-management {
+    width: 100%;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.info-panel {
+    display: flex;
+    background-color: #f8f9fa;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+}
+
+.info-item {
+    margin-right: 24px;
+}
+
+.schedule-form-container {
+    background-color: white;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+}
+
+.form-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.form-group {
+    flex: 1;
+    min-width: 150px;
+    margin-bottom: 16px;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-top: 24px;
+}
+
+.checkbox-group input {
+    margin-right: 8px;
+    width: auto;
+}
+
+.form-buttons {
+    margin-top: 16px;
+}
+
+.schedules-list {
+    background-color: white;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.no-data {
+    text-align: center;
+    padding: 16px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 16px;
+}

@@ -12,6 +12,7 @@ public interface ChairRoomMapper {
 
     /* ---------- entity → response ---------- */
     @Mapping(source = "subsidiary.name", target = "subsidiaryName")
+    @Mapping(source = "subsidiary.id", target = "subsidiaryId")  // Adicionado este mapeamento
     ChairRoomResponse toResponse(ChairRoom entity);
 
     /* ---------- request → entity ---------- */

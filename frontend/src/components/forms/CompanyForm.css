@@ -40,3 +40,11 @@
     margin: 16px 0;
     padding-bottom: 8px;
 }
+
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
