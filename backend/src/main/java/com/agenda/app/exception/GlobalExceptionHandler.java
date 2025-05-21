@@ -108,6 +108,30 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Trata exceções de entidade duplicada
+     */
+    @ExceptionHandler(DuplicateEntityException.class)
+    public ResponseEntity<Map<String, Object>> handleDuplicateEntity(
+            DuplicateEntityException ex) {
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.CONFLICT.value());
+        response.put("error", "Duplicate Entity");
+        response.put("message", ex.getMessage());
+
+        // Adicionar informações sobre o campo duplicado, se disponíveis
+        if (ex.getField() != null && ex.getValue() != null) {
+            Map<String, String> details = new HashMap<>();
+            details.put("field", ex.getField());
+            details.put("value", ex.getValue());
+            response.put("details", details);
+        }
+
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
+    /**
      * Trata outras exceções não especificadas
      */
     @ExceptionHandler(Exception.class)
