@@ -1,4 +1,3 @@
-// src/main/java/com/agenda/app/dto/ItemRequest.java
 package com.agenda.app.dto;
 
 import jakarta.validation.constraints.*;

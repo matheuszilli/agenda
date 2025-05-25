@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,6 +28,12 @@ public class Subsidiary extends BaseEntity {
     @OneToMany(mappedBy = "subsidiary", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<SubsidiaryScheduleEntry> scheduleEntries = new HashSet<>();
 
+    // Campos de horários padrão (agora sem a anotação @NotNull)
+    @Column(name = "open_time")
+    private LocalTime openTime;
+    
+    @Column(name = "close_time")
+    private LocalTime closeTime;
 
     @NotBlank
     @Column(name = "document_number", length = 20)
@@ -35,4 +42,14 @@ public class Subsidiary extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
+
+    // Relacionamentos com outras entidades
+    @OneToMany(mappedBy = "subsidiary", cascade = CascadeType.ALL)
+    private Set<ChairRoom> chairRooms = new HashSet<>();
+    
+    @OneToMany(mappedBy = "subsidiary", cascade = CascadeType.ALL)
+    private Set<Professional> professionals = new HashSet<>();
+    
+    @OneToMany(mappedBy = "subsidiary", cascade = CascadeType.ALL)
+    private Set<Item> services = new HashSet<>();
 }

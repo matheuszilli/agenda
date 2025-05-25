@@ -1,14 +1,18 @@
 package com.agenda.app.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-
-public record CompanyResponse(
-    UUID id,
-    String name,
-    AddressResponse address,   // << era String
-    String phone,
-    String documentNumber
-    ) {}
+@Data
+@AllArgsConstructor
+@NoArgsConstructor 
+public class CompanyResponse {
+    private UUID id;
+    private String name;
+    private AddressDTO address;
+    private String phone;
+    private String documentNumber;
+}

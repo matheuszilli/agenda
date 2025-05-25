@@ -82,6 +82,11 @@ public class ChairRoomService {
         return mapper.toResponse(chairRoom);
     }
 
+    @Transactional
+    public void deleteChairRoom(UUID id) {
+        chairRoomRepository.deleteById(id);
+    }
+
     @Transactional(readOnly = true)
     public List<ChairRoomResponse> findAvailableRoomsForTimeSlot(
             UUID subsidiaryId,

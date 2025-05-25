@@ -11,8 +11,8 @@ import java.util.UUID;
 public class ChairRoomScheduleEntryRequest {
 
     @NotNull private UUID chairRoomId;
-    @NotNull private LocalDate date;
-    @NotNull private LocalTime openTime;
-    @NotNull private LocalTime closeTime;
+    private LocalDate date;
+    private LocalTime openTime;
+    private LocalTime closeTime;
     private boolean closed;
 }

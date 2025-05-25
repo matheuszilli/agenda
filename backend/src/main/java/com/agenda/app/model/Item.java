@@ -8,10 +8,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "services")
-@Getter @Setter @NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class Item extends BaseEntity {
 
@@ -35,4 +39,11 @@ public class Item extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "subsidiary_id", nullable = false)
+    private Subsidiary subsidiary;
+
+    @ManyToMany(mappedBy = "services")
+    private Set<Professional> professionals = new HashSet<>();
 }

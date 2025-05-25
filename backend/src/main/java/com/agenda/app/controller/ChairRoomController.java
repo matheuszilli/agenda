@@ -49,10 +49,21 @@ public class ChairRoomController {
         return ResponseEntity.ok(chairRoomService.findAvailableRoomsForTimeSlot(subsidiaryId, startTime, endTime));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ChairRoomResponse> updateChairRoom(@PathVariable UUID id, @Valid @RequestBody ChairRoomRequest request) {
+        return ResponseEntity.ok(chairRoomService.updateChairRoom(id, request));
+    }
+
     @PostMapping
     public ResponseEntity<ChairRoomResponse> createChairRoom(@Valid @RequestBody ChairRoomRequest request) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(chairRoomService.createChairRoom(request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteChairRoom(@PathVariable UUID id) {
+        chairRoomService.deleteChairRoom(id);
+        return ResponseEntity.noContent().build();
     }
 }

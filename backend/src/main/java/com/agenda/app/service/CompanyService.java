@@ -1,17 +1,18 @@
 package com.agenda.app.service;
 
 import com.agenda.app.dto.*;
+import com.agenda.app.exception.DuplicateEntityException;
 import com.agenda.app.mapper.CompanyMapper;
 import com.agenda.app.model.Company;
 import com.agenda.app.repository.CompanyRepository;
 import com.agenda.app.util.CnpjUtils;
+import com.agenda.app.util.PhoneUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -26,7 +27,11 @@ public class CompanyService {
     public CompanyResponse create(CompanyRequest dto) {
         // Validar nome único
         if (repo.existsByName(dto.getName())) {
-            throw new IllegalArgumentException("Company with name %s already exists".formatted(dto.getName()));
+            throw new DuplicateEntityException(
+                    "Company with name already exists",
+                    "name",
+                    dto.getName()
+            );
         }
 
         // Formatar CNPJ para o padrão XX.XXX.XXX/XXXX-XX
@@ -39,16 +44,31 @@ public class CompanyService {
 
         // Validar CNPJ único
         if (repo.existsByDocumentNumber(formattedCnpj)) {
-            throw new IllegalArgumentException("Company with CNPJ %s already exists".formatted(formattedCnpj));
+            throw new DuplicateEntityException(
+                    "Company with CNPJ already exists",
+                    "documentNumber",
+                    formattedCnpj
+            );
         }
 
         // Validar que não existe outra empresa com o mesmo prefixo de CNPJ
         if (repo.existsByDocumentNumberPrefix(formattedCnpj, null)) {
-            throw new IllegalArgumentException("Another company with the same CNPJ prefix already exists. Only one company with the same root is allowed");
+            throw new DuplicateEntityException(
+                    "Another company with the same CNPJ prefix already exists. Only one company with the same root is allowed",
+                    "documentNumber",
+                    formattedCnpj
+            );
         }
 
-        // Atualizar o CNPJ formatado no DTO
+        // Formatar telefone
+        String formattedPhone = null;
+        if (dto.getPhone() != null && !dto.getPhone().isBlank()) {
+            formattedPhone = PhoneUtils.formatPhone(dto.getPhone());
+        }
+
+        // Atualizar o DTO com valores formatados
         dto.setDocumentNumber(formattedCnpj);
+        dto.setPhone(formattedPhone);
 
         // Criar a entidade e salvar
         Company entity = mapper.toEntity(dto);
@@ -60,7 +80,7 @@ public class CompanyService {
     @Transactional(readOnly = true)
     public CompanyResponse get(UUID id) {
         Company entity = repo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Company %s not found".formatted(id)));
+                .orElseThrow(() -> new EntityNotFoundException("Company not found with id: " + id));
         return mapper.toResponse(entity);
     }
 
@@ -77,11 +97,15 @@ public class CompanyService {
     @Transactional
     public CompanyResponse update(UUID id, CompanyRequest dto) {
         Company entity = repo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Company %s not found".formatted(id)));
+                .orElseThrow(() -> new EntityNotFoundException("Company not found with id: " + id));
 
         // Verificar se o nome está sendo alterado e se já existe
         if (!dto.getName().equals(entity.getName()) && repo.existsByName(dto.getName())) {
-            throw new IllegalArgumentException("Company with name %s already exists".formatted(dto.getName()));
+            throw new DuplicateEntityException(
+                    "Company with name already exists",
+                    "name",
+                    dto.getName()
+            );
         }
 
         // Formatar CNPJ
@@ -95,17 +119,32 @@ public class CompanyService {
         // Verificar se o CNPJ está sendo alterado e se já existe
         if (!formattedCnpj.equals(entity.getDocumentNumber()) &&
                 repo.existsByDocumentNumber(formattedCnpj)) {
-            throw new IllegalArgumentException("Company with CNPJ %s already exists".formatted(formattedCnpj));
+            throw new DuplicateEntityException(
+                    "Company with CNPJ already exists",
+                    "documentNumber",
+                    formattedCnpj
+            );
         }
 
         // Verificar se o CNPJ está sendo alterado para um prefixo que já existe em outra empresa
         if (!formattedCnpj.equals(entity.getDocumentNumber()) &&
                 repo.existsByDocumentNumberPrefix(formattedCnpj, id)) {
-            throw new IllegalArgumentException("Another company with the same CNPJ prefix already exists. Only one company with the same root is allowed");
+            throw new DuplicateEntityException(
+                    "Another company with the same CNPJ prefix already exists. Only one company with the same root is allowed",
+                    "documentNumber",
+                    formattedCnpj
+            );
         }
 
-        // Atualizar o CNPJ formatado no DTO
+        // Formatar telefone
+        String formattedPhone = null;
+        if (dto.getPhone() != null && !dto.getPhone().isBlank()) {
+            formattedPhone = PhoneUtils.formatPhone(dto.getPhone());
+        }
+
+        // Atualizar o DTO com valores formatados
         dto.setDocumentNumber(formattedCnpj);
+        dto.setPhone(formattedPhone);
 
         // Atualizar a entidade
         mapper.updateEntityFromDto(dto, entity);
@@ -117,7 +156,7 @@ public class CompanyService {
     @Transactional
     public void delete(UUID id) {
         if (!repo.existsById(id)) {
-            throw new EntityNotFoundException("Company %s not found".formatted(id));
+            throw new EntityNotFoundException("Company not found with id: " + id);
         }
         repo.deleteById(id);
     }
@@ -144,6 +183,6 @@ public class CompanyService {
     public Company findByDocumentNumber(String documentNumber) {
         String formattedCnpj = CnpjUtils.formatCnpj(documentNumber);
         return repo.findByDocumentNumber(formattedCnpj)
-                .orElseThrow(() -> new EntityNotFoundException("Company with CNPJ %s not found".formatted(formattedCnpj)));
+                .orElseThrow(() -> new EntityNotFoundException("Company not found with CNPJ: " + formattedCnpj));
     }
 }

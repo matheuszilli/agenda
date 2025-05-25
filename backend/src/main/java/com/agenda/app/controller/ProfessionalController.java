@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -28,6 +29,11 @@ public class ProfessionalController {
     @GetMapping("/{id}")
     public ProfessionalResponse get(@PathVariable UUID id) {
         return service.get(id);
+    }
+
+    @GetMapping
+    public List<ProfessionalResponse> listAll() {
+        return service.listAll();
     }
 
     @PutMapping("/{id}")

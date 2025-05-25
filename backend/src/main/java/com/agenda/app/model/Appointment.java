@@ -5,6 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,29 +20,32 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class Appointment extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "customer_id", nullable = false)
-    private Customer customer;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subsidiary_id")
+    private Subsidiary subsidiary;
+    
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "professional_id", nullable = false)
     private Professional professional;
-
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chair_room_id")
     private ChairRoom chairRoom;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "customer_id", nullable = false)
+    private Customer customer;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "service_id", nullable = false)
     private Item item;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subsidiary_id")
-    private Subsidiary subsidiary;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
+
+    @Column(nullable = false)
+    private LocalDate date;
 
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
@@ -52,7 +57,7 @@ public class Appointment extends BaseEntity {
     private String notes;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 20, nullable = false)
+    @Column(nullable = false)
     private AppointmentStatus status;
 
     @OneToOne(fetch = FetchType.LAZY)

@@ -1,4 +1,3 @@
-// src/main/java/com/agenda/app/mapper/ItemMapper.java
 package com.agenda.app.mapper;
 
 import com.agenda.app.dto.*;

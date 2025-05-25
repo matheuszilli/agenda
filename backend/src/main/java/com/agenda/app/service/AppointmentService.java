@@ -37,6 +37,7 @@ public class AppointmentService {
     private final SubsidiaryScheduleEntryRepository subsidiaryScheduleRepository;
     private final ProfessionalScheduleEntryRepository professionalScheduleRepository;
     private final ChairRoomScheduleEntryRepository chairRoomScheduleRepository;
+    private final ProfessionalChairRoomAssignmentRepository professionalChairRoomAssignmentRepository;
 
     @Transactional
     public AppointmentResponse scheduleAppointment(AppointmentRequest dto) {
@@ -83,6 +84,12 @@ public class AppointmentService {
                     .orElseThrow(() -> new EntityNotFoundException("Chair/Room not found: " + dto.getChairRoomId()));
 
             verifyChairRoomAvailability(chairRoom.getId(), appointmentDate, startTime, endTime);
+            
+            // Verificar se o profissional está atribuído a esta cadeira/sala no horário
+            verifyProfessionalChairRoomAssignment(prof.getId(), chairRoom.getId(), appointmentDate, startTime, endTime);
+        } else {
+            // Verificar se o profissional precisa estar em uma cadeira/sala específica
+            verifyProfessionalRequiresChairRoom(prof.getId(), appointmentDate);
         }
 
         // Criar o agendamento
@@ -146,6 +153,96 @@ public class AppointmentService {
 
         if (startTime.isBefore(schedule.getStartTime()) || endTime.isAfter(schedule.getEndTime())) {
             throw new ConflictException("Professional is not available at this time");
+        }
+        
+        // Verificar conflitos com outros agendamentos do profissional
+        LocalDateTime start = LocalDateTime.of(date, startTime);
+        LocalDateTime end = LocalDateTime.of(date, endTime);
+        
+        boolean hasConflict = appointmentRepository.findByProfessionalIdAndStartTimeAfterAndEndTimeBefore(
+                professionalId, start.minusDays(1), end.plusDays(1))
+                .stream()
+                .filter(a -> a.getStatus() != AppointmentStatus.CANCELLED)
+                .anyMatch(a -> {
+                    // Verificar se há sobreposição de horários
+                    return (a.getStartTime().isBefore(end) && a.getEndTime().isAfter(start));
+                });
+        
+        if (hasConflict) {
+            throw new ConflictException("Professional already has an appointment at this time");
+        }
+    }
+    
+    /**
+     * Verifica se o profissional está atribuído à cadeira/sala no horário
+     */
+    private void verifyProfessionalChairRoomAssignment(
+            UUID professionalId, 
+            UUID chairRoomId, 
+            LocalDate date, 
+            LocalTime startTime, 
+            LocalTime endTime) {
+        
+        // Buscar atribuições específicas para a data
+        var assignments = professionalChairRoomAssignmentRepository
+                .findByProfessionalIdAndChairRoomIdAndDate(professionalId, chairRoomId, date);
+        
+        // Se não encontrar atribuição específica, buscar atribuição recorrente
+        if (assignments.isEmpty()) {
+            int dayOfWeek = date.getDayOfWeek().getValue();
+            assignments = professionalChairRoomAssignmentRepository
+                    .findByProfessional_IdAndChairRoom_IdAndRecurringTrueAndDayOfWeek(
+                            professionalId, chairRoomId, dayOfWeek);
+        }
+        
+        // Se não encontrar nenhuma atribuição, verificar se é necessária
+        if (assignments.isEmpty()) {
+            // Verificar se o profissional está atribuído a outra cadeira/sala no mesmo dia
+            var otherAssignments = professionalChairRoomAssignmentRepository.findEffectiveAssignmentsForDate(
+                    professionalId, date);
+            
+            if (!otherAssignments.isEmpty()) {
+                throw new ConflictException(
+                        "Professional is assigned to another chair/room on this date");
+            }
+            
+            // Se não estiver atribuído a nenhuma cadeira/sala, pode usar qualquer uma
+            return;
+        }
+        
+        // Verificar se alguma atribuição cobre o horário do agendamento
+        boolean isAssigned = assignments.stream()
+                .anyMatch(assignment -> {
+                    return !endTime.isBefore(assignment.getStartTime()) && 
+                           !startTime.isAfter(assignment.getEndTime());
+                });
+        
+        if (!isAssigned) {
+            throw new ConflictException(
+                    "Professional is not assigned to this chair/room at the requested time");
+        }
+    }
+    
+    /**
+     * Verifica se o profissional precisa estar em uma cadeira/sala específica
+     */
+    private void verifyProfessionalRequiresChairRoom(UUID professionalId, LocalDate date) {
+        // Verificar se o profissional está atribuído a alguma cadeira/sala neste dia
+        boolean hasAssignment = professionalChairRoomAssignmentRepository.existsByProfessional_IdAndDate(
+                professionalId, date);
+        
+        // Se não encontrar atribuição específica, verificar atribuições recorrentes
+        if (!hasAssignment) {
+            int dayOfWeek = date.getDayOfWeek().getValue();
+            var recurringAssignments = professionalChairRoomAssignmentRepository
+                    .findByChairRoom_IdAndRecurringTrueAndDayOfWeek(professionalId, dayOfWeek);
+            
+            hasAssignment = !recurringAssignments.isEmpty();
+        }
+        
+        if (hasAssignment) {
+            throw new ConflictException(
+                    "Professional requires a specific chair/room for this date");
         }
     }
 

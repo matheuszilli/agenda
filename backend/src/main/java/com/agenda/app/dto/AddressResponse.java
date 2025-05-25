@@ -2,13 +2,10 @@ package com.agenda.app.dto;
 
 import lombok.Data;
 
+/**
+ * @deprecated Use AddressDTO instead
+ */
 @Data
-public class AddressResponse {
-    private String street;
-    private String number;
-    private String complement;
-    private String neighbourhood;
-    private String city;
-    private String state;
-    private String zipCode;
+@Deprecated
+public class AddressResponse extends AddressDTO {
 }

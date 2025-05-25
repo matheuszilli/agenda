@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -90,6 +92,14 @@ public class ProfessionalService {
         professionalRepository.save(entity);
         return mapper.toResponse(entity);
     }
+
+    /* =========== READ =========== */
+    @Transactional(readOnly = true)
+public List<ProfessionalResponse> listAll() {
+    return professionalRepository.findAll().stream()
+            .map(mapper::toResponse)
+            .collect(Collectors.toList());
+}
 
     /* =========== DELETE =========== */
     @Transactional

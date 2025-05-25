@@ -28,20 +28,18 @@ public class SubsidiaryService {
     @Transactional
     public SubsidiaryResponse create(SubsidiaryRequest dto) {
         // Verificar se já existe subsidiária com mesmo nome na mesma empresa
-        if (subsidiaryRepository.existsByNameIgnoreCaseAndCompanyId(dto.name(), dto.companyId())) {
+        if (subsidiaryRepository.existsByNameIgnoreCaseAndCompanyId(dto.getName(), dto.getCompanyId())) {
             throw new IllegalArgumentException("Subsidiary already exists");
         }
 
-
-
         // Buscar empresa relacionada
-        Company company = companyRepository.findById(dto.companyId())
+        Company company = companyRepository.findById(dto.getCompanyId())
                 .orElseThrow(() -> new IllegalArgumentException("Company not found"));
 
         // Formatando o CNPJ da subsidiária
         String formattedSubsidiaryCnpj;
         try {
-            formattedSubsidiaryCnpj = CnpjUtils.formatCnpj(dto.documentNumber());
+            formattedSubsidiaryCnpj = CnpjUtils.formatCnpj(dto.getDocumentNumber());
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid CNPJ format: " + e.getMessage());
         }
@@ -55,10 +53,10 @@ public class SubsidiaryService {
 
         // Criar objeto de requisição com CNPJ formatado
         SubsidiaryRequest formattedRequest = new SubsidiaryRequest(
-                dto.name(),
-                dto.address(),
+                dto.getName(),
+                dto.getAddress(),
                 formattedSubsidiaryCnpj,
-                dto.companyId()
+                dto.getCompanyId()
         );
 
         Subsidiary entity = mapper.toEntity(formattedRequest, company);
@@ -82,6 +80,14 @@ public class SubsidiaryService {
                 .map(mapper::toResponse)
                 .collect(Collectors.toList());
     }
+    
+    @Transactional(readOnly = true)
+    public List<SubsidiaryResponse> listByCompany(UUID companyId) {
+        return subsidiaryRepository.findByCompanyId(companyId)
+                .stream()
+                .map(mapper::toResponse)
+                .collect(Collectors.toList());
+    }
 
     /* ======================= UPDATE ======================= */
     @Transactional
@@ -92,7 +98,7 @@ public class SubsidiaryService {
         // Formatando o CNPJ da subsidiária
         String formattedSubsidiaryCnpj;
         try {
-            formattedSubsidiaryCnpj = CnpjUtils.formatCnpj(dto.documentNumber());
+            formattedSubsidiaryCnpj = CnpjUtils.formatCnpj(dto.getDocumentNumber());
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid CNPJ format: " + e.getMessage());
         }
@@ -106,10 +112,10 @@ public class SubsidiaryService {
 
         // Criar objeto de requisição com CNPJ formatado
         SubsidiaryRequest formattedRequest = new SubsidiaryRequest(
-                dto.name(),
-                dto.address(),
+                dto.getName(),
+                dto.getAddress(),
                 formattedSubsidiaryCnpj,
-                dto.companyId()
+                dto.getCompanyId()
         );
 
         // Se quiser impedir troca de empresa, não mexa em company aqui

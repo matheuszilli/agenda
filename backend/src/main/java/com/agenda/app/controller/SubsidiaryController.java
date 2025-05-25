@@ -35,6 +35,12 @@ public class SubsidiaryController {
         List<SubsidiaryResponse> subsidiaries = service.listAll();
         return ResponseEntity.ok(subsidiaries);
     }
+    
+    @GetMapping("/by-company/{companyId}")
+    public ResponseEntity<List<SubsidiaryResponse>> listByCompany(@PathVariable UUID companyId) {
+        List<SubsidiaryResponse> subsidiaries = service.listByCompany(companyId);
+        return ResponseEntity.ok(subsidiaries);
+    }
 
     @PutMapping("/{id}")
     public SubsidiaryResponse update(@PathVariable UUID id,
