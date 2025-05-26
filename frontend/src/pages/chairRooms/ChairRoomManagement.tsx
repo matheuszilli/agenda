@@ -1,37 +1,47 @@
-// src/pages/chairRooms/ChairRoomManagement.tsx
 import { useState, useEffect } from 'react';
-import type { ChairRoom, PageResponse } from '../../services/chairRoomService';
-import { chairRoomService } from '../../services/chairRoomService';
-import type { Subsidiary } from '../../services/subsidiaryService';
+import { type ChairRoom, chairRoomService } from '../../services/chairRoomService';
 import { subsidiaryService } from '../../services/subsidiaryService';
 import ChairRoomForm from '../../components/forms/ChairRoomForm';
 import './ChairRoomManagement.css';
+import { useParams, useNavigate } from 'react-router-dom';
 
 export default function ChairRoomManagement() {
-    const [chairRoomPage, setChairRoomPage] = useState<PageResponse<ChairRoom> | null>(null);
+    const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
+    const [chairRooms, setChairRooms] = useState<ChairRoom[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [showForm, setShowForm] = useState(false);
-    const [currentChairRoom, setCurrentChairRoom] = useState<ChairRoom | undefined>();
+    const [success, setSuccess] = useState('');
+    const [currentChairRoom, setCurrentChairRoom] = useState<ChairRoom | null>(null);
     const [subsidiaryNames, setSubsidiaryNames] = useState<Record<string, string>>({});
-
-    // Estado para paginação
-    const [currentPage, setCurrentPage] = useState(0);
-    const [pageSize, setPageSize] = useState(10);
+    const [showForm, setShowForm] = useState(id === 'new' || !!id);
+    const isNew = id === 'new';
 
     const fetchChairRooms = async () => {
         try {
             setLoading(true);
-            const data = await chairRoomService.getAll(currentPage, pageSize);
-
-            // Agora temos o objeto de paginação completo
-            setChairRoomPage(data);
+            const data = await chairRoomService.getAll();
+            setChairRooms(data);
             setError('');
 
             // Buscar nomes das subsidiárias
             fetchSubsidiaryNames();
-        } catch (err) {
-            setError('Erro ao carregar cadeiras/salas');
+        } catch (err: any) {
+            setError(`Erro ao carregar cadeiras/salas: ${err.message}`);
+            console.error('Erro:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchChairRoom = async (chairRoomId: string) => {
+        try {
+            setLoading(true);
+            const data = await chairRoomService.getById(chairRoomId);
+            setCurrentChairRoom(data);
+            setError('');
+        } catch (err: any) {
+            setError(`Erro ao carregar cadeira/sala: ${err.message}`);
             console.error('Erro:', err);
         } finally {
             setLoading(false);
@@ -41,14 +51,12 @@ export default function ChairRoomManagement() {
     const fetchSubsidiaryNames = async () => {
         try {
             const subsidiaries = await subsidiaryService.getAll();
-
             const namesMap: Record<string, string> = {};
-            subsidiaries.forEach((subsidiary: Subsidiary) => {
+            subsidiaries.forEach((subsidiary: any) => {
                 if (subsidiary.id) {
                     namesMap[subsidiary.id] = subsidiary.name;
                 }
             });
-
             setSubsidiaryNames(namesMap);
         } catch (err) {
             console.error('Erro ao buscar nomes de subsidiárias:', err);
@@ -56,8 +64,12 @@ export default function ChairRoomManagement() {
     };
 
     useEffect(() => {
-        fetchChairRooms();
-    }, [currentPage, pageSize]);
+        if (id && id !== 'new') {
+            fetchChairRoom(id);
+        } else {
+            fetchChairRooms();
+        }
+    }, [id]);
 
     const handleEdit = (chairRoom: ChairRoom) => {
         setCurrentChairRoom(chairRoom);
@@ -71,130 +83,121 @@ export default function ChairRoomManagement() {
 
         try {
             await chairRoomService.delete(id);
-            fetchChairRooms(); // Recarrega a lista
-        } catch (err) {
-            setError('Erro ao excluir cadeira/sala');
+            setSuccess('Cadeira/sala excluída com sucesso!');
+            setTimeout(() => {
+                setSuccess('');
+                fetchChairRooms();
+            }, 1500);
+        } catch (err: any) {
+            setError(`Erro ao excluir cadeira/sala: ${err.message}`);
             console.error('Erro:', err);
         }
     };
 
     const handleFormSubmit = async (data: ChairRoom) => {
         try {
+            setLoading(true);
             if (data.id) {
-                // Atualizar cadeira existente
                 await chairRoomService.update(data.id, data);
+                setSuccess('Cadeira/sala atualizada com sucesso!');
             } else {
-                // Criar nova cadeira
                 await chairRoomService.create(data);
+                setSuccess('Cadeira/sala criada com sucesso!');
             }
 
-            setShowForm(false);
-            setCurrentChairRoom(undefined);
-            fetchChairRooms(); // Recarrega a lista
-        } catch (err) {
-            setError('Erro ao salvar cadeira/sala');
+            // Redirecionar para a lista após um breve delay
+            setTimeout(() => {
+                navigate('/chair-rooms');
+            }, 1500);
+
+        } catch (err: any) {
+            setError(`Erro ao salvar cadeira/sala: ${err.message}`);
             console.error('Erro:', err);
+            setLoading(false);
         }
     };
 
     const handleFormCancel = () => {
+        // Reset dos estados relevantes
         setShowForm(false);
-        setCurrentChairRoom(undefined);
+        setCurrentChairRoom(null);
+        
+        // Navegação para a página de listagem
+        navigate('/chair-rooms', { replace: true });
     };
 
-    const handlePageChange = (newPage: number) => {
-        setCurrentPage(newPage);
-    };
+    if (loading && (id && id !== 'new')) return <div className="loading">Carregando...</div>;
+    if (!isNew && id && error) return <div className="error-message">{error}</div>;
+    if (success) return <div className="success-message">{success}</div>;
 
-    if (loading && !chairRoomPage) return <div>Carregando...</div>;
+    // Se estamos na página de edição/criação, mostrar o formulário
+    if (showForm) {
+        return (
+            <div className="chair-room-management-container">
+                <ChairRoomForm
+                    initialData={currentChairRoom || undefined}
+                    onSubmit={handleFormSubmit}
+                    onCancel={handleFormCancel}
+                />
+            </div>
+        );
+    }
 
-    // Extraímos os chairRooms do objeto de paginação
-    const chairRooms = chairRoomPage?.content || [];
-
+    // Caso contrário, mostrar a lista
     return (
-        <div className="chair-room-management">
-            <div className="page-header">
-                <h1>Gestão de Cadeiras/Salas</h1>
+        <div className="chair-room-management-container">
+            <div className="list-header">
+                <h2>Cadeiras/Salas</h2>
                 {!showForm && (
-                    <button onClick={() => setShowForm(true)}>Nova Cadeira/Sala</button>
+                <button className="add-button" onClick={() => setShowForm(true)}>+ Nova Cadeira/Sala</button>
                 )}
             </div>
 
             {error && <div className="error-message">{error}</div>}
 
-            {showForm ? (
-                <div className="form-container">
-                    <ChairRoomForm
-                        initialData={currentChairRoom}
-                        onSubmit={handleFormSubmit}
-                        onCancel={handleFormCancel}
-                    />
+            {chairRooms.length === 0 ? (
+                <div className="no-data">
+                    Nenhuma cadeira/sala encontrada. Clique em "Nova Cadeira/Sala" para adicionar.
                 </div>
             ) : (
-                <div className="table-container">
-                    {chairRooms.length === 0 ? (
-                        <p className="no-data">Nenhuma cadeira/sala encontrada</p>
-                    ) : (
-                        <>
-                            <table>
-                                <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Subsidiária</th>
-                                    <th>Número</th>
-                                    <th>Capacidade</th>
-                                    <th>Descrição</th>
-                                    <th>Ações</th>
+                <table className="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Subsidiária</th>
+                            <th>Número</th>
+                            <th>Capacidade</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {Array.isArray(chairRooms)
+                            ? chairRooms.map(chairRoom => (
+                                <tr key={chairRoom.id}>
+                                    <td>{chairRoom.name}</td>
+                                    <td>{subsidiaryNames[chairRoom.subsidiaryId] || 'Subsidiária não encontrada'}</td>
+                                    <td>{chairRoom.roomNumber}</td>
+                                    <td>{chairRoom.capacity}</td>
+                                    <td className="action-buttons">
+                                        <button
+                                            className="edit-button"
+                                            onClick={() => chairRoom.id && handleEdit(chairRoom)}
+                                        >
+                                            Editar
+                                        </button>
+                                        <button
+                                            className="delete-button"
+                                            onClick={() => chairRoom.id && handleDelete(chairRoom.id)}
+                                        >
+                                            Excluir
+                                        </button>
+                                    </td>
                                 </tr>
-                                </thead>
-                                <tbody>
-                                {chairRooms.map(chairRoom => (
-                                    <tr key={chairRoom.id}>
-                                        <td>{chairRoom.name}</td>
-                                        <td>{subsidiaryNames[chairRoom.subsidiaryId] || 'Subsidiária não encontrada'}</td>
-                                        <td>{chairRoom.roomNumber}</td>
-                                        <td>{chairRoom.capacity}</td>
-                                        <td>{chairRoom.description || '-'}</td>
-                                        <td className="action-buttons">
-                                            <button onClick={() => handleEdit(chairRoom)}>Editar</button>
-                                            <button
-                                                className="secondary"
-                                                onClick={() => window.location.href = `/cadeiras/horarios/${chairRoom.id}`}
-                                            >
-                                                Horários
-                                            </button>
-                                            <button className="danger" onClick={() => chairRoom.id && handleDelete(chairRoom.id)}>
-                                                Excluir
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                            </table>
-
-                            {/* Adiciona controles de paginação */}
-                            {chairRoomPage && chairRoomPage.totalPages > 1 && (
-                                <div className="pagination-controls">
-                                    <button
-                                        onClick={() => handlePageChange(currentPage - 1)}
-                                        disabled={currentPage === 0}
-                                    >
-                                        Anterior
-                                    </button>
-                                    <span>
-                    Página {currentPage + 1} de {chairRoomPage.totalPages}
-                  </span>
-                                    <button
-                                        onClick={() => handlePageChange(currentPage + 1)}
-                                        disabled={currentPage === chairRoomPage.totalPages - 1}
-                                    >
-                                        Próxima
-                                    </button>
-                                </div>
-                            )}
-                        </>
-                    )}
-                </div>
+                            ))
+                            : <tr><td colSpan={5}>Formato de dados inesperado</td></tr>
+                        }
+                    </tbody>
+                </table>
             )}
         </div>
     );

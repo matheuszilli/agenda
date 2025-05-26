@@ -1,6 +1,7 @@
 package com.agenda.app.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -11,6 +12,7 @@ public class AddressDTO {
     @NotBlank
     private String number;
     
+    @NotNull
     private String complement;
     private String neighbourhood;
     

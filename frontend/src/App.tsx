@@ -1,18 +1,14 @@
-// src/App.tsx
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import MainLayout from './components/layout/MainLayout';
 import CompanyManagement from './pages/companies/CompanyManagement';
 import SubsidiaryManagement from './pages/subsidiaries/SubsidiaryManagement';
 import ChairRoomManagement from './pages/chairRooms/ChairRoomManagement';
-import ChairRoomScheduleManagement from './pages/chairRooms/ChairRoomScheduleManagement';
-
-// Componentes temporários para as páginas não implementadas
-const PlaceholderPage = ({ title }: { title: string }) => (
-    <div>
-        <h1>{title}</h1>
-        <p>Esta página ainda será implementada.</p>
-    </div>
-);
+import ItemManagement from './pages/items/ItemManagement';
+import ItemList from './pages/items/ItemList';
+import ProfessionalManagement from './pages/professionals/ProfessionalManagement';
+import ProfessionalList from './pages/professionals/ProfessionalList';
+import AppointmentList from './pages/appointments/AppointmentList';
+import AppointmentCalendar from './pages/appointments/AppointmentCalendar';
 
 function App() {
     return (
@@ -23,13 +19,37 @@ function App() {
                         <h1>Bem-vindo ao Sistema de Agenda MVP</h1>
                         <p>Utilize o menu superior para navegar pelo sistema.</p>
                     </div>} />
+                    
+                    {/* Empresas */}
                     <Route path="empresas" element={<CompanyManagement />} />
+                    <Route path="empresas/nova" element={<CompanyManagement />} />
+                    <Route path="empresas/:id/editar" element={<CompanyManagement />} />
+                    
+                    {/* Subsidiárias */}
                     <Route path="subsidiarias" element={<SubsidiaryManagement />} />
-                    <Route path="cadeiras" element={<ChairRoomManagement />} />
-                    <Route path="cadeiras/horarios/:id" element={<ChairRoomScheduleManagement />} />
-                    <Route path="profissionais" element={<PlaceholderPage title="Gestão de Profissionais" />} />
-                    <Route path="servicos" element={<PlaceholderPage title="Gestão de Serviços" />} />
-                    <Route path="agenda" element={<PlaceholderPage title="Agenda" />} />
+                    <Route path="subsidiarias/nova" element={<SubsidiaryManagement />} />
+                    <Route path="subsidiarias/:id/editar" element={<SubsidiaryManagement />} />
+                    
+                    {/* Cadeiras/Salas */}
+                    <Route path="chair-rooms" element={<ChairRoomManagement />} />
+                    <Route path="chair-rooms/new" element={<ChairRoomManagement />} />
+                    <Route path="chair-rooms/:id/edit" element={<ChairRoomManagement />} />
+                    
+                    {/* Serviços */}
+                    <Route path="services" element={<ItemList />} />
+                    <Route path="services/new" element={<ItemManagement />} />
+                    <Route path="services/:id/edit" element={<ItemManagement />} />
+                    
+                    {/* Profissionais */}
+                    <Route path="professionals" element={<ProfessionalManagement />} />
+                    <Route path="professionals/new" element={<ProfessionalManagement />} />
+                    <Route path="professionals/:id/edit" element={<ProfessionalManagement />} />
+                    
+                    {/* Agenda */}
+                    <Route path="appointments" element={<AppointmentList />} />
+                    <Route path="agenda/:subsidiaryId" element={<AppointmentCalendar />} />
+                    <Route path="agenda/:subsidiaryId/novo" element={<AppointmentCalendar />} />
+                    <Route path="agenda/editar/:id" element={<AppointmentCalendar />} />
                 </Route>
             </Routes>
         </BrowserRouter>

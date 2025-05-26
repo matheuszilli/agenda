@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -29,6 +30,12 @@ public class ItemController {
     @GetMapping("/{id}")
     public ItemResponse get(@PathVariable UUID id) {
         return service.get(id);
+    }
+
+    @GetMapping("/by-subsidiary/{subsidiaryId}")
+    public ResponseEntity<List<ItemResponse>> listBySubsidiary(@PathVariable UUID subsidiaryId) {
+        List<ItemResponse> items = service.listBySubsidiary(subsidiaryId);
+        return ResponseEntity.ok(items);
     }
 
     @PutMapping("/{id}")

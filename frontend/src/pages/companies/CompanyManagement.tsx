@@ -100,27 +100,37 @@ export default function CompanyManagement() {
                     ) : (
                         <table>
                             <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>CNPJ</th>
-                                <th>Telefone</th>
-                                <th>Cidade/UF</th>
-                                <th>Ações</th>
-                            </tr>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>CNPJ</th>
+                                    <th>Telefone</th>
+                                    <th>Cidade/UF</th>
+                                    <th>Ações</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            {companies.map(company => (
-                                <tr key={company.id}>
-                                    <td>{company.name}</td>
-                                    <td>{company.documentNumber}</td>
-                                    <td>{company.phone}</td>
-                                    <td>{company.address?.city}/{company.address?.state}</td>
-                                    <td className="action-buttons">
-                                        <button onClick={() => handleEdit(company)}>Editar</button>
-                                        <button className="danger" onClick={() => company.id && handleDelete(company.id)}>Excluir</button>
-                                    </td>
-                                </tr>
-                            ))}
+                                {companies.map(company => (
+                                    <tr key={company.id}>
+                                        <td>{company.name}</td>
+                                        <td>{company.documentNumber}</td>
+                                        <td>{company.phone}</td>
+                                        <td>{company.address?.city}/{company.address?.state}</td>
+                                        <td className="action-buttons">
+                                            <button 
+                                                className="edit-button"
+                                                onClick={() => handleEdit(company)}
+                                            >
+                                                Editar
+                                            </button>
+                                            <button 
+                                                className="delete-button danger"
+                                                onClick={() => company.id && handleDelete(company.id)}
+                                            >
+                                                Excluir
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     )}

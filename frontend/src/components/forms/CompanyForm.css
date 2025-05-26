@@ -1,15 +1,63 @@
 .company-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.form-section-header {
+    border-bottom: 1px solid #eee;
+    margin: 16px 0;
+    padding-bottom: 8px;
+    width: 100%;
+    font-size: 1.5rem;
+}
+
+/* Estilos para as abas */
+.tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+    width: 100%;
+}
+
+.tab-button {
+    padding: 10px 15px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.tab-button:hover {
+    background-color: #f5f5f5;
+}
+
+.tab-button.active {
+    border-bottom: 2px solid #007bff;
+    color: #007bff;
+}
+
+.tab-button:disabled {
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+.tab-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
+    width: 100%;
 }
 
-.company-form .full-width {
-    grid-column: 1 / -1;
-}
-
+/* Estilos para os grupos de formulário */
 .form-group {
     margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
 }
 
 .form-group label {
@@ -18,33 +66,155 @@
     font-weight: 500;
 }
 
-.form-group input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-}
-
-.form-buttons {
-    grid-column: 1 / -1;
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 24px;
-}
-
-.form-section-header {
-    grid-column: 1 / -1;
-    border-bottom: 1px solid #eee;
-    margin: 16px 0;
-    padding-bottom: 8px;
-}
-
+.form-group input,
 .form-group select {
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.form-group input.error,
+.form-group select.error {
+    border-color: #dc3545;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+/* Estilos para os botões */
+.form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+    width: 100%;
+}
+
+button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+button.primary {
+    background-color: #007bff;
+    color: white;
+}
+
+button.primary:hover {
+    background-color: #0069d9;
+}
+
+button.secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+button.secondary:hover {
+    background-color: #5a6268;
+}
+
+button.danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+button.danger:hover {
+    background-color: #c82333;
+}
+
+/* Estilos para o painel de subsidiárias */
+.subsidiaries-panel {
+    grid-column: 1 / -1;
+    width: 100%;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.subsidiaries-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.subsidiaries-table th,
+.subsidiaries-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.subsidiaries-table thead th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+}
+
+.subsidiaries-table .actions {
+    display: flex;
+    gap: 8px;
+}
+
+.no-data {
+    padding: 30px;
+    text-align: center;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    color: #6c757d;
+}
+
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: #6c757d;
+}
+
+.add-button {
+    background-color: #28a745;
+    color: white;
+}
+
+.add-button:hover {
+    background-color: #218838;
+}
+
+.edit-button {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.edit-button:hover {
+    background-color: #e0a800;
+}
+
+.delete-button {
+    background-color: #dc3545;
+    color: white;
+}
+
+.delete-button:hover {
+    background-color: #c82333;
 }

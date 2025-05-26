@@ -1,8 +1,12 @@
 // src/main/java/com/agenda/app/mapper/ProfessionalMapper.java
 package com.agenda.app.mapper;
 
+import com.agenda.app.dto.CustomerRequest;
+import com.agenda.app.dto.CustomerResponse;
 import com.agenda.app.dto.ProfessionalRequest;
 import com.agenda.app.dto.ProfessionalResponse;
+import com.agenda.app.model.Company;
+import com.agenda.app.model.Customer;
 import com.agenda.app.model.Professional;
 import com.agenda.app.model.Subsidiary;
 import org.mapstruct.BeanMapping;
@@ -13,8 +17,11 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@Mapper(componentModel = "spring",
-        unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(
+    componentModel = "spring",
+    unmappedTargetPolicy = ReportingPolicy.IGNORE,
+    uses = {AddressMapper.class}
+)
 public interface ProfessionalMapper {
 
     /* ---------- entity → response ---------- */
@@ -44,23 +51,4 @@ public interface ProfessionalMapper {
     void copyNonNullToEntity(ProfessionalRequest req,
                              @MappingTarget Professional entity);
 
-    // @Mapper(componentModel = "spring")
-    // interface CustomerMapper {
-
-    //     // entity → response
-    //     @Mapping(source = "company.id", target = "companyId")
-    //     CustomerResponse toResponse(Customer entity);
-
-    //     // request → entity, a service vai buscar a Company e passar como @Context
-    //     @Mapping(target = "id", ignore = true)
-    //     @Mapping(source = "req.firstName", target = "firstName")
-    //     @Mapping(source = "req.lastName",  target = "lastName")
-    //     @Mapping(source = "req.email",     target = "email")
-    //     @Mapping(source = "req.phone",     target = "phone")
-    //     @Mapping(source = "req.documentNumber", target = "documentNumber")
-    //     @Mapping(source = "req.address",   target = "address")
-    //     @Mapping(target = "company",       expression = "java(company)")
-    //     Customer toEntity(CustomerRequest req,
-    //                       @Context Company company);
-    // }
 }

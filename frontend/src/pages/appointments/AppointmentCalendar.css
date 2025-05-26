@@ -1,0 +1,125 @@
+.appointment-calendar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.appointment-calendar-container h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.appointment-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.add-appointment-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.add-appointment-button:hover {
+  background-color: #218838;
+}
+
+.appointment-details {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.appointment-details h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  color: #495057;
+}
+
+.appointment-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+}
+
+.appointment-info-item {
+  margin-bottom: 10px;
+}
+
+.appointment-info-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 5px;
+}
+
+.appointment-info-value {
+  color: #333;
+}
+
+.appointment-actions-panel {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.info-message {
+  color: #0c5460;
+  background-color: #d1ecf1;
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+/* Status badges */
+.status-badge {
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.status-scheduled {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+.status-confirmed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-in-progress {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-completed {
+  background-color: #d1e7dd;
+  color: #0f5132;
+}
+
+.status-canceled {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.status-no-show {
+  background-color: #e2e3e5;
+  color: #383d41;
+}

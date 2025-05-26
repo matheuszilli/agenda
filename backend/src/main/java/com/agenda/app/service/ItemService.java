@@ -12,7 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +48,14 @@ public class ItemService {
         return itemRepository.findById(id)
                 .map(mapper::toResponse)
                 .orElseThrow(() -> new IllegalArgumentException("Service not found"));
+    }
+
+    @Transactional(readOnly = true)
+    public List<ItemResponse> listBySubsidiary(UUID subsidiaryId) {
+        return itemRepository.findBySubsidiaryId(subsidiaryId)
+                .stream()
+                .map(mapper::toResponse)
+                .collect(Collectors.toList());
     }
 
     // - UPDATE

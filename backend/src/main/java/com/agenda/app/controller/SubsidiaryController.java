@@ -3,6 +3,7 @@ package com.agenda.app.controller;
 
 import com.agenda.app.dto.SubsidiaryRequest;
 import com.agenda.app.dto.SubsidiaryResponse;
+import com.agenda.app.dto.ItemResponse;
 import com.agenda.app.service.SubsidiaryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,12 @@ public class SubsidiaryController {
     public ResponseEntity<List<SubsidiaryResponse>> listByCompany(@PathVariable UUID companyId) {
         List<SubsidiaryResponse> subsidiaries = service.listByCompany(companyId);
         return ResponseEntity.ok(subsidiaries);
+    }
+
+    @GetMapping("/services/by-subsidiary/{subsidiaryId}")
+    public ResponseEntity<List<ItemResponse>> listServicesBySubsidiary(@PathVariable UUID subsidiaryId) {
+        List<ItemResponse> services = service.listServicesBySubsidiary(subsidiaryId);
+        return ResponseEntity.ok(services);
     }
 
     @PutMapping("/{id}")

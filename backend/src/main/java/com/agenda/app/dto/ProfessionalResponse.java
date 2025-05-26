@@ -11,7 +11,7 @@ public record ProfessionalResponse(
         String lastName,
         String fullName,
         String documentNumber,
-        Address address,
+        AddressDTO address,
         String phone,
         String email,
         UUID subsidiaryId

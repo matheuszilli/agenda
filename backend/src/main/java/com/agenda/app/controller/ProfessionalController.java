@@ -20,6 +20,8 @@ public class ProfessionalController {
     @PostMapping
     public ResponseEntity<ProfessionalResponse> create(
             @RequestBody @Valid ProfessionalRequest body) {
+        System.out.println("ENDEREÇO: " + body.getAddress());
+        System.out.println("CIDADE: " + (body.getAddress() != null ? body.getAddress().getCity() : "nulo"));
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

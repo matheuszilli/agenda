@@ -1,6 +1,6 @@
 .main-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     background-color: #000;
     color: #fff;
@@ -10,13 +10,29 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.logo {
+    margin-right: 20px;
+}
+
 .logo h1 {
     font-size: 1.5rem;
     margin: 0;
 }
 
+.logo-link {
+    color: #fff;
+    text-decoration: none;
+}
+
+.company-selector-container {
+    flex-grow: 1;
+    max-width: 600px;
+    margin-right: 20px;
+}
+
 .main-nav {
     height: 100%;
+    margin-left: auto;
 }
 
 .menu {
