@@ -67,7 +67,7 @@ const handleApiError = (error: any): never => {
 export const companyService = {
     getAll: async (): Promise<Company[]> => {
         try {
-            const response = await api.get('/companies');
+            const response = await api.get('/v1/companies');
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -76,7 +76,7 @@ export const companyService = {
 
     getById: async (id: string): Promise<Company> => {
         try {
-            const response = await api.get(`/companies/${id}`);
+            const response = await api.get(`/v1/companies/${id}`);
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -85,7 +85,7 @@ export const companyService = {
 
     create: async (company: Company): Promise<Company> => {
         try {
-            const response = await api.post('/companies', company);
+            const response = await api.post('/v1/companies', company);
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -94,7 +94,7 @@ export const companyService = {
 
     update: async (id: string, company: Company): Promise<Company> => {
         try {
-            const response = await api.put(`/companies/${id}`, company);
+            const response = await api.put(`/v1/companies/${id}`, company);
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -103,7 +103,7 @@ export const companyService = {
 
     delete: async (id: string): Promise<void> => {
         try {
-            await api.delete(`/companies/${id}`);
+            await api.delete(`/v1/companies/${id}`);
         } catch (error) {
             return handleApiError(error);
         }
@@ -113,7 +113,7 @@ export const companyService = {
     getSubsidiaries: async (companyId: string): Promise<any[]> => {
         try {
             // Usando o endpoint correto no backend
-            const response = await api.get(`/subsidiaries/by-company/${companyId}`);
+            const response = await api.get(`/v1/subsidiaries/by-company/${companyId}`);
             return response.data;
         } catch (error) {
             return handleApiError(error);

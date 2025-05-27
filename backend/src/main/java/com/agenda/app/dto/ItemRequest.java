@@ -11,5 +11,6 @@ public record ItemRequest(
         @Positive Integer durationMinutes,
         @NotNull Boolean requiresPrePayment,
         @NotNull UUID companyId, //Empresa dona do serviço
+        @NotNull UUID subsidiaryId, //Subsidiária onde o serviço é oferecido
         Boolean active
 ) {}

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import React from 'react';
 import { type Professional, professionalService, type ProfessionalServiceConfig } from '../../services/professionalService';
 import { type Item, itemService } from '../../services/itemService';
 import { subsidiaryService } from '../../services/subsidiaryService';
@@ -82,6 +83,7 @@ export default function ProfessionalForm({ initialData = emptyProfessional, onSu
   const [services, setServices] = useState<Item[]>([]);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [serviceConfigs, setServiceConfigs] = useState<ProfessionalServiceConfig[]>([]);
+  const [expandedServices, setExpandedServices] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('professional-info');
@@ -259,13 +261,50 @@ export default function ProfessionalForm({ initialData = emptyProfessional, onSu
     });
   };
 
+  const toggleExpand = (serviceId: string) => {
+    setExpandedServices(prev => {
+      const newExpanded = new Set(prev);
+      if (newExpanded.has(serviceId)) {
+        newExpanded.delete(serviceId);
+      } else {
+        newExpanded.add(serviceId);
+      }
+      return newExpanded;
+    });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
+      // Converter configurações para o formato esperado pelo backend
+      const backendServiceConfigs = serviceConfigs.map(config => {
+        console.log('Configuração de serviço:', config);
+        
+        // Converter valores para o formato correto (BigDecimal no backend)
+        const commissionPct = config.commissionType === 'PERCENTAGE' && config.commissionValue ? 
+          Number(config.commissionValue) : undefined;
+        const commissionFixed = config.commissionType === 'FIXED' && config.commissionValue ? 
+          Number(config.commissionValue) : undefined;
+          
+        return {
+          serviceId: config.serviceId,
+          professionalId: formData.id || undefined,
+          customPrice: undefined, // Não estamos customizando preço por enquanto
+          customDurationMinutes: undefined, // Não estamos customizando duração por enquanto
+          commissionPct: commissionPct,
+          commissionFixed: commissionFixed
+        };
+      });
+
+      console.log('Dados enviados para o backend:', {
+        ...formData,
+        services: backendServiceConfigs
+      });
+
       // Incluir as configurações de serviço no formulário
       const professionalWithServices = {
         ...formData,
-        services: serviceConfigs
+        services: backendServiceConfigs
       };
       onSubmit(professionalWithServices);
     }
@@ -524,57 +563,150 @@ export default function ProfessionalForm({ initialData = emptyProfessional, onSu
       
       {activeTab === 'services' && (
         <div className="tab-content">
-          <h3>Serviços oferecidos pelo profissional</h3>
+          <div className="panel-header">
+            <h3>Serviços oferecidos pelo profissional</h3>
+          </div>
           
           {services.length === 0 ? (
             <div className="no-data">
               Nenhum serviço cadastrado para esta subsidiária.
+              <br />
+              <small>Cadastre serviços na aba "Serviços" da subsidiária primeiro.</small>
             </div>
           ) : (
-            <div className="professionals-list">
-              {services.map(service => (
-                <div key={service.id} className="service-item">
-                  <div className="service-header">
-                    <input
-                      type="checkbox"
-                      id={`service-${service.id}`}
-                      checked={selectedServices.includes(service.id!)}
-                      onChange={() => handleServiceToggle(service.id!)}
-                    />
-                    <label htmlFor={`service-${service.id}`}>
-                      {service.name} - {service.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} ({service.durationMinutes} min)
-                    </label>
-                  </div>
-                  
-                  {selectedServices.includes(service.id!) && (
-                    <div className="service-config">
-                      <div className="form-group">
-                        <label>Tipo de Comissão</label>
-                        <select
-                          value={serviceConfigs.find(c => c.serviceId === service.id)?.commissionType || 'PERCENTAGE'}
-                          onChange={(e) => handleServiceConfigChange(service.id!, 'commissionType', e.target.value)}
-                        >
-                          <option value="PERCENTAGE">Porcentagem</option>
-                          <option value="FIXED">Valor Fixo</option>
-                          <option value="NONE">Sem Comissão</option>
-                        </select>
-                      </div>
+            <>
+              {/* Tabela de Serviços */}
+              <div className="services-table-container">
+                <table className="services-table">
+                  <thead>
+                    <tr>
+                      <th style={{ width: '40px' }}>+/-</th>
+                      <th style={{ width: '60px' }}>Vínculo</th>
+                      <th>Serviço</th>
+                      <th style={{ width: '120px' }}>Valor Padrão</th>
+                      <th style={{ width: '120px' }}>Tempo Padrão</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {services.map(service => {
+                      const isSelected = selectedServices.includes(service.id!);
+                      const isExpanded = expandedServices.has(service.id!);
                       
-                      <div className="form-group">
-                        <label>Valor da Comissão</label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          value={serviceConfigs.find(c => c.serviceId === service.id)?.commissionValue || 0}
-                          onChange={(e) => handleServiceConfigChange(service.id!, 'commissionValue', parseFloat(e.target.value))}
-                        />
+                      return (
+                        <tr key={service.id} className={`service-row ${isSelected ? 'selected' : 'unselected'}`}>
+                          <td className="expand-cell">
+                            {isSelected && (
+                              <button
+                                type="button"
+                                className="expand-button"
+                                onClick={() => toggleExpand(service.id!)}
+                              >
+                                {isExpanded ? '−' : '+'}
+                              </button>
+                            )}
+                          </td>
+                          <td className="checkbox-cell">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => handleServiceToggle(service.id!)}
+                            />
+                          </td>
+                          <td className="service-name">
+                            <div className="service-info">
+                              <strong>{service.name}</strong>
+                              {service.description && (
+                                <small className="service-description">{service.description}</small>
+                              )}
+                            </div>
+                          </td>
+                          <td className="value-cell">
+                            <input
+                              type="text"
+                              value={service.price.toLocaleString('pt-BR', { 
+                                style: 'currency', 
+                                currency: 'BRL' 
+                              })}
+                              disabled={!isSelected}
+                              className={!isSelected ? 'disabled-field' : ''}
+                              readOnly
+                            />
+                          </td>
+                          <td className="time-cell">
+                            <input
+                              type="text"
+                              value={`${service.durationMinutes} min`}
+                              disabled={!isSelected}
+                              className={!isSelected ? 'disabled-field' : ''}
+                              readOnly
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Seção de Configuração de Comissão */}
+              {selectedServices.length > 0 && (
+                <div className="commission-section">
+                  <h3 className="form-section-header">Configuração de Comissão</h3>
+                  
+                  {selectedServices.map(serviceId => {
+                    const service = services.find(s => s.id === serviceId);
+                    const config = serviceConfigs.find(c => c.serviceId === serviceId);
+                    const isExpanded = expandedServices.has(serviceId);
+                    
+                    if (!service || !isExpanded) return null;
+                    
+                    return (
+                      <div key={serviceId} className="commission-config-card">
+                        <div className="config-card-header">
+                          <h4>{service.name}</h4>
+                          <span className="service-details">
+                            {service.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} • {service.durationMinutes} min
+                          </span>
+                        </div>
+                        
+                        <div className="config-form-row">
+                          <div className="form-group">
+                            <label>Tipo de Comissão</label>
+                            <select
+                              value={config?.commissionType || 'PERCENTAGE'}
+                              onChange={(e) => handleServiceConfigChange(serviceId, 'commissionType', e.target.value)}
+                              className="commission-select"
+                            >
+                              <option value="PERCENTAGE">Porcentagem (%)</option>
+                              <option value="FIXED">Valor Fixo (R$)</option>
+                              <option value="NONE">Sem Comissão</option>
+                            </select>
+                          </div>
+                          
+                          <div className="form-group">
+                            <label>
+                              Valor da Comissão 
+                              {config?.commissionType === 'PERCENTAGE' ? '(%)' : '(R$)'}
+                            </label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              max={config?.commissionType === 'PERCENTAGE' ? '100' : undefined}
+                              value={config?.commissionValue || 0}
+                              onChange={(e) => handleServiceConfigChange(serviceId, 'commissionValue', parseFloat(e.target.value))}
+                              disabled={config?.commissionType === 'NONE'}
+                              className={config?.commissionType === 'NONE' ? 'disabled-field' : ''}
+                              placeholder={config?.commissionType === 'PERCENTAGE' ? 'Ex: 15' : 'Ex: 50.00'}
+                            />
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    );
+                  })}
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           )}
         </div>
       )}

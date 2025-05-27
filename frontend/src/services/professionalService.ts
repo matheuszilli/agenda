@@ -29,12 +29,16 @@ export interface ProfessionalServiceConfig {
     professionalId?: string;
     commissionType?: string;
     commissionValue?: number;
+    customPrice?: number;
+    customDurationMinutes?: number;
+    commissionPct?: number;
+    commissionFixed?: number;
 }
 
 export const professionalService = {
     listAll: async (): Promise<Professional[]> => {
         try {
-            const response = await api.get('/professionals');
+            const response = await api.get('/v1/professionals');
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -43,7 +47,7 @@ export const professionalService = {
 
     getById: async (id: string): Promise<Professional> => {
         try {
-            const response = await api.get(`/professionals/${id}`);
+            const response = await api.get(`/v1/professionals/${id}`);
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -52,7 +56,7 @@ export const professionalService = {
 
     getBySubsidiary: async (subsidiaryId: string): Promise<Professional[]> => {
         try {
-            const response = await api.get(`/professionals/by-subsidiary/${subsidiaryId}`);
+            const response = await api.get(`/v1/professionals/by-subsidiary/${subsidiaryId}`);
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -61,7 +65,7 @@ export const professionalService = {
 
     create: async (professional: Professional): Promise<Professional> => {
         try {
-            const response = await api.post('/professionals', professional);
+            const response = await api.post('/v1/professionals', professional);
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -70,7 +74,7 @@ export const professionalService = {
 
     update: async (id: string, professional: Professional): Promise<Professional> => {
         try {
-            const response = await api.put(`/professionals/${id}`, professional);
+            const response = await api.put(`/v1/professionals/${id}`, professional);
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -79,7 +83,7 @@ export const professionalService = {
 
     delete: async (id: string): Promise<void> => {
         try {
-            await api.delete(`/professionals/${id}`);
+            await api.delete(`/v1/professionals/${id}`);
         } catch (error) {
             return handleApiError(error);
         }
@@ -88,7 +92,7 @@ export const professionalService = {
     // Services associations
     getServices: async (professionalId: string): Promise<ProfessionalServiceConfig[]> => {
         try {
-            const response = await api.get(`/professionals/${professionalId}/services`);
+            const response = await api.get(`/v1/professionals/${professionalId}/services`);
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -97,7 +101,7 @@ export const professionalService = {
 
     addService: async (professionalId: string, config: ProfessionalServiceConfig): Promise<void> => {
         try {
-            await api.post(`/professionals/${professionalId}/services`, config);
+            await api.post(`/v1/professionals/${professionalId}/services`, config);
         } catch (error) {
             return handleApiError(error);
         }
@@ -105,7 +109,7 @@ export const professionalService = {
 
     removeService: async (professionalId: string, serviceId: string): Promise<void> => {
         try {
-            await api.delete(`/professionals/${professionalId}/services/${serviceId}`);
+            await api.delete(`/v1/professionals/${professionalId}/services/${serviceId}`);
         } catch (error) {
             return handleApiError(error);
         }
@@ -114,7 +118,7 @@ export const professionalService = {
     // Schedule management
     getSchedule: async (professionalId: string): Promise<any[]> => {
         try {
-            const response = await api.get(`/professionals/${professionalId}/schedule`);
+            const response = await api.get(`/v1/professionals/${professionalId}/schedule`);
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -123,7 +127,7 @@ export const professionalService = {
 
     addScheduleEntry: async (professionalId: string, scheduleEntry: any): Promise<void> => {
         try {
-            await api.post(`/professionals/${professionalId}/schedule`, scheduleEntry);
+            await api.post(`/v1/professionals/${professionalId}/schedule`, scheduleEntry);
         } catch (error) {
             return handleApiError(error);
         }
@@ -131,7 +135,7 @@ export const professionalService = {
 
     removeScheduleEntry: async (professionalId: string, entryId: string): Promise<void> => {
         try {
-            await api.delete(`/professionals/${professionalId}/schedule/${entryId}`);
+            await api.delete(`/v1/professionals/${professionalId}/schedule/${entryId}`);
         } catch (error) {
             return handleApiError(error);
         }

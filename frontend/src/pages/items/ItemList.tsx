@@ -37,7 +37,6 @@ export default function ItemList() {
 
     try {
       await itemService.delete(id);
-      // Atualizar a lista após excluir
       fetchItems();
     } catch (err: any) {
       setError(`Erro ao excluir serviço: ${err.message}`);

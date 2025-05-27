@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/companies")
+@RequestMapping("${api.version}/companies")
 @RequiredArgsConstructor
 public class CompanyController {
 

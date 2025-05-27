@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { Subsidiary } from '../../services/subsidiaryService';
 import { subsidiaryService } from '../../services/subsidiaryService';
 import type { Company } from '../../services/companyService';
 import { companyService } from '../../services/companyService';
 import { chairRoomService } from '../../services/chairRoomService';
 import { professionalService } from '../../services/professionalService';
+import { itemService } from '../../services/itemService';
 import './CompanyForm.css';  // Reutilizando os estilos
 
 // Máscara de formatação para CNPJ
@@ -56,15 +58,28 @@ const emptySubsidiary: Subsidiary = {
 };
 
 interface Professional {
-    id: string;
-    name: string;
+    id?: string;
+    firstName: string;
+    lastName: string;
+    fullName?: string;
     email: string;
     phone: string;
     documentNumber: string;
     subsidiaryId: string;
 }
 
+interface Service {
+    id?: string;
+    name: string;
+    description?: string;
+    price: number;
+    durationMinutes: number;
+    requiresPrePayment: boolean;
+    active?: boolean;
+}
+
 export default function SubsidiaryForm({ initialData = emptySubsidiary, onSubmit, onCancel }: SubsidiaryFormProps) {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState<Subsidiary>(initialData);
     const [companies, setCompanies] = useState<Company[]>([]);
     const [loading, setLoading] = useState(true);
@@ -76,8 +91,8 @@ export default function SubsidiaryForm({ initialData = emptySubsidiary, onSubmit
     
     // Para gerenciar o estado das entidades relacionadas
     const [chairRooms, setChairRooms] = useState<any[]>([]);
-    const [professionals, setProfessionals] = useState<any[]>([]);
-    const [services, setServices] = useState<any[]>([]);
+    const [professionals, setProfessionals] = useState<Professional[]>([]);
+    const [services, setServices] = useState<Service[]>([]);
     const [schedules, setSchedules] = useState<any[]>([]);
     const [loadingRelated, setLoadingRelated] = useState(false);
     const [relatedError, setRelatedError] = useState('');
@@ -106,19 +121,18 @@ export default function SubsidiaryForm({ initialData = emptySubsidiary, onSubmit
     }, []);
 
     useEffect(() => {
-        if (!initialData.id) return;  // só busca se já tivermos o ID
+        if (!initialData.id) return;
     
         const fetchProfessionals = async () => {
             try {
-                setLoading(true);
-                // passa o ID correto para o serviço
+                setLoadingRelated(true);
                 const data = await professionalService.getBySubsidiary(initialData.id!);
                 setProfessionals(data);
             } catch (err: any) {
                 setRelatedError('Erro ao carregar profissionais');
                 console.error('Erro ao carregar profissionais:', err);
             } finally {
-                setLoading(false);
+                setLoadingRelated(false);
             }
         };
     
@@ -142,18 +156,17 @@ export default function SubsidiaryForm({ initialData = emptySubsidiary, onSubmit
             const chairRoomsData = await chairRoomService.getBySubsidiary(subsidiaryId);
             setChairRooms(chairRoomsData);
 
-            // Horários (implementar quando o serviço estiver disponível)
-            // const schedulesData = await subsidiaryService.getSchedules(subsidiaryId);
-            // setSchedules(schedulesData);
-
-            // Profissionais (a implementar)
+            // Profissionais
             const professionalsData = await professionalService.getBySubsidiary(subsidiaryId);
             setProfessionals(professionalsData);
 
+            // Serviços
+            const servicesData = await itemService.getBySubsidiary(subsidiaryId);
+            setServices(servicesData);
 
-            // Serviços (a implementar)
-            // const servicesData = await serviceService.getBySubsidiary(subsidiaryId);
-            // setServices(servicesData);
+            // Horários (implementar quando o serviço estiver disponível)
+            // const schedulesData = await subsidiaryService.getSchedules(subsidiaryId);
+            // setSchedules(schedulesData);
         } catch (error: any) {
             setRelatedError(`Erro ao carregar dados relacionados: ${error.message || 'Erro desconhecido'}`);
             console.error('Erro ao carregar dados relacionados:', error);
@@ -232,11 +245,11 @@ export default function SubsidiaryForm({ initialData = emptySubsidiary, onSubmit
 
     // Manipuladores para ações de cadeiras/salas
     const handleAddChairRoom = () => {
-        alert('Adicionar cadeira/sala - implementar navegação para o formulário de cadeira/sala');
+        navigate(`/chair-rooms/new?subsidiaryId=${initialData.id}`);
     };
 
     const handleEditChairRoom = (chairRoomId: string) => {
-        alert(`Editar cadeira/sala ${chairRoomId} - implementar navegação para o formulário de cadeira/sala`);
+        navigate(`/chair-rooms/${chairRoomId}/edit`);
     };
 
     const handleDeleteChairRoom = async (chairRoomId: string) => {
@@ -259,6 +272,58 @@ export default function SubsidiaryForm({ initialData = emptySubsidiary, onSubmit
     // Manipuladores para horários (a implementar)
     const handleAddSchedule = () => {
         alert('Adicionar horário - implementar formulário de horários recorrentes');
+    };
+
+    // Manipuladores para profissionais
+    const handleAddProfessional = () => {
+        navigate(`/professionals/new?subsidiaryId=${initialData.id}`);
+    };
+
+    const handleEditProfessional = (professionalId: string) => {
+        navigate(`/professionals/${professionalId}/edit`);
+    };
+
+    const handleDeleteProfessional = async (professionalId: string) => {
+        if (!window.confirm('Tem certeza que deseja excluir este profissional?')) {
+            return;
+        }
+
+        try {
+            await professionalService.delete(professionalId);
+            // Recarregar a lista após a exclusão
+            if (initialData.id) {
+                fetchRelatedEntities(initialData.id);
+            }
+        } catch (error: any) {
+            setRelatedError(`Erro ao excluir profissional: ${error.message || 'Erro desconhecido'}`);
+            console.error('Erro ao excluir profissional:', error);
+        }
+    };
+
+    // Manipuladores para serviços
+    const handleAddService = () => {
+        navigate(`/services/new?subsidiaryId=${initialData.id}`);
+    };
+
+    const handleEditService = (serviceId: string) => {
+        navigate(`/services/${serviceId}/edit`);
+    };
+
+    const handleDeleteService = async (serviceId: string) => {
+        if (!window.confirm('Tem certeza que deseja excluir este serviço?')) {
+            return;
+        }
+
+        try {
+            await itemService.delete(serviceId);
+            // Recarregar a lista após a exclusão
+            if (initialData.id) {
+                fetchRelatedEntities(initialData.id);
+            }
+        } catch (error: any) {
+            setRelatedError(`Erro ao excluir serviço: ${error.message || 'Erro desconhecido'}`);
+            console.error('Erro ao excluir serviço:', error);
+        }
     };
 
     if (loading) return <div>Carregando empresas...</div>;
@@ -572,12 +637,63 @@ export default function SubsidiaryForm({ initialData = emptySubsidiary, onSubmit
                                 <button 
                                     type="button" 
                                     className="add-button"
-                                    onClick={() => alert('Adicionar profissional - a implementar')}
+                                    onClick={handleAddProfessional}
                                 >
                                     + Novo Profissional
                                 </button>
                             </div>
-
+                            
+                            {relatedError && (
+                                <div className="error-message">{relatedError}</div>
+                            )}
+                            
+                            {loadingRelated ? (
+                                <div className="loading-message">Carregando profissionais...</div>
+                            ) : professionals.length === 0 ? (
+                                <div className="no-data">
+                                    Nenhum profissional encontrado para esta subsidiária.
+                                    <br />
+                                    Clique em "Novo Profissional" para adicionar.
+                                </div>
+                            ) : (
+                                <table className="subsidiaries-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Email</th>
+                                            <th>Telefone</th>
+                                            <th>CPF</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {professionals.map(professional => (
+                                            <tr key={professional.id}>
+                                                <td>{professional.fullName || `${professional.firstName} ${professional.lastName}`}</td>
+                                                <td>{professional.email}</td>
+                                                <td>{professional.phone}</td>
+                                                <td>{professional.documentNumber}</td>
+                                                <td className="action-buttons">
+                                                    <button 
+                                                        type="button" 
+                                                        className="edit-button"
+                                                        onClick={() => professional.id && handleEditProfessional(professional.id)}
+                                                    >
+                                                        Editar
+                                                    </button>
+                                                    <button 
+                                                        type="button" 
+                                                        className="delete-button"
+                                                        onClick={() => professional.id && handleDeleteProfessional(professional.id)}
+                                                    >
+                                                        Excluir
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
                         </div>
                     )}
                 </div>
@@ -596,15 +712,74 @@ export default function SubsidiaryForm({ initialData = emptySubsidiary, onSubmit
                                 <button 
                                     type="button" 
                                     className="add-button"
-                                    onClick={() => alert('Adicionar serviço - a implementar')}
+                                    onClick={handleAddService}
                                 >
                                     + Novo Serviço
                                 </button>
                             </div>
                             
-                            <div className="no-data">
-                                Funcionalidade em desenvolvimento.
-                            </div>
+                            {relatedError && (
+                                <div className="error-message">{relatedError}</div>
+                            )}
+                            
+                            {loadingRelated ? (
+                                <div className="loading-message">Carregando serviços...</div>
+                            ) : services.length === 0 ? (
+                                <div className="no-data">
+                                    Nenhum serviço encontrado para esta subsidiária.
+                                    <br />
+                                    Clique em "Novo Serviço" para adicionar.
+                                </div>
+                            ) : (
+                                <table className="subsidiaries-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Descrição</th>
+                                            <th>Preço</th>
+                                            <th>Duração</th>
+                                            <th>Status</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {services.map(service => (
+                                            <tr key={service.id}>
+                                                <td>{service.name}</td>
+                                                <td>{service.description || '-'}</td>
+                                                <td>
+                                                    {service.price.toLocaleString('pt-BR', {
+                                                        style: 'currency',
+                                                        currency: 'BRL'
+                                                    })}
+                                                </td>
+                                                <td>{service.durationMinutes} min</td>
+                                                <td>
+                                                    <span className={service.active ? 'status-active' : 'status-inactive'}>
+                                                        {service.active ? 'Ativo' : 'Inativo'}
+                                                    </span>
+                                                </td>
+                                                <td className="action-buttons">
+                                                    <button 
+                                                        type="button" 
+                                                        className="edit-button"
+                                                        onClick={() => service.id && handleEditService(service.id)}
+                                                    >
+                                                        Editar
+                                                    </button>
+                                                    <button 
+                                                        type="button" 
+                                                        className="delete-button"
+                                                        onClick={() => service.id && handleDeleteService(service.id)}
+                                                    >
+                                                        Excluir
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
                         </div>
                     )}
                 </div>

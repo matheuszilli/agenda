@@ -69,7 +69,7 @@ const handleApiError = (error: any): never => {
 export const subsidiaryService = {
     getAll: async (): Promise<Subsidiary[]> => {
         try {
-            const response = await api.get('/subsidiaries');
+            const response = await api.get('/v1/subsidiaries');
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -78,9 +78,8 @@ export const subsidiaryService = {
 
     getByCompany: async (companyId: string): Promise<Subsidiary[]> => {
         try {
-            // Assumindo que existe um endpoint para isso no backend
-            // Se não existir, você poderia filtrar do getAll
-            const response = await api.get(`/companies/${companyId}/subsidiaries`);
+            // Usando o endpoint correto que existe no backend
+            const response = await api.get(`/v1/subsidiaries/by-company/${companyId}`);
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -89,7 +88,7 @@ export const subsidiaryService = {
 
     getById: async (id: string): Promise<Subsidiary> => {
         try {
-            const response = await api.get(`/subsidiaries/${id}`);
+            const response = await api.get(`/v1/subsidiaries/${id}`);
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -98,7 +97,7 @@ export const subsidiaryService = {
 
     create: async (subsidiary: Subsidiary): Promise<Subsidiary> => {
         try {
-            const response = await api.post('/subsidiaries', subsidiary);
+            const response = await api.post('/v1/subsidiaries', subsidiary);
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -107,7 +106,7 @@ export const subsidiaryService = {
 
     update: async (id: string, subsidiary: Subsidiary): Promise<Subsidiary> => {
         try {
-            const response = await api.put(`/subsidiaries/${id}`, subsidiary);
+            const response = await api.put(`/v1/subsidiaries/${id}`, subsidiary);
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -116,7 +115,7 @@ export const subsidiaryService = {
 
     delete: async (id: string): Promise<void> => {
         try {
-            await api.delete(`/subsidiaries/${id}`);
+            await api.delete(`/v1/subsidiaries/${id}`);
         } catch (error) {
             return handleApiError(error);
         }
@@ -125,7 +124,7 @@ export const subsidiaryService = {
     // Métodos para gerenciar horários
     getSchedules: async (subsidiaryId: string): Promise<SubsidiarySchedule[]> => {
         try {
-            const response = await api.get(`/subsidiary-schedules/by-subsidiary/${subsidiaryId}`);
+            const response = await api.get(`/v1/subsidiary-schedules/by-subsidiary/${subsidiaryId}`);
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -134,7 +133,7 @@ export const subsidiaryService = {
 
     createSchedule: async (schedule: Omit<SubsidiarySchedule, 'id'>): Promise<SubsidiarySchedule> => {
         try {
-            const response = await api.post('/subsidiary-schedules', schedule);
+            const response = await api.post('/v1/subsidiary-schedules', schedule);
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -143,7 +142,7 @@ export const subsidiaryService = {
 
     updateSchedule: async (id: string, schedule: Omit<SubsidiarySchedule, 'id'>): Promise<SubsidiarySchedule> => {
         try {
-            const response = await api.put(`/subsidiary-schedules/${id}`, schedule);
+            const response = await api.put(`/v1/subsidiary-schedules/${id}`, schedule);
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -152,7 +151,7 @@ export const subsidiaryService = {
 
     deleteSchedule: async (id: string): Promise<void> => {
         try {
-            await api.delete(`/subsidiary-schedules/${id}`);
+            await api.delete(`/v1/subsidiary-schedules/${id}`);
         } catch (error) {
             return handleApiError(error);
         }
@@ -169,7 +168,7 @@ export const subsidiaryService = {
         replaceExisting: boolean = false
     ): Promise<number> => {
         try {
-            const response = await api.post(`/api/recurring-schedules/subsidiary/${subsidiaryId}`, {
+            const response = await api.post(`/v1/api/recurring-schedules/subsidiary/${subsidiaryId}`, {
                 openTime,
                 closeTime,
                 daysOfWeek,

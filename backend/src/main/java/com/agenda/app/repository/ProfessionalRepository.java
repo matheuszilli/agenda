@@ -3,6 +3,7 @@ package com.agenda.app.repository;
 import com.agenda.app.model.Professional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,5 +20,9 @@ public interface ProfessionalRepository extends JpaRepository<Professional, UUID
     boolean existsByEmailIgnoreCase(String email);
 
     Optional<Professional> findByDocumentNumberIgnoreCase(String documentNumber);
+
+    List<Professional> findBySubsidiaryId(UUID id);
+
+    
 
 }

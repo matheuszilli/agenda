@@ -45,3 +45,480 @@ textarea:focus {
   border-color: #007bff;
   outline: none;
 }
+
+/* Estilos específicos para formulários de serviços */
+
+.services-management {
+  margin-top: 20px;
+}
+
+.services-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.service-item {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #fafafa;
+}
+
+.service-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.service-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+}
+
+.service-label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  flex: 1;
+}
+
+.service-label strong {
+  font-size: 16px;
+  color: #333;
+}
+
+.service-details {
+  font-size: 14px;
+  color: #666;
+}
+
+.service-description {
+  font-style: italic;
+  color: #888;
+}
+
+.service-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.edit-button.small {
+  padding: 5px 8px;
+  font-size: 14px;
+  min-width: auto;
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.edit-button.small:hover {
+  background: #e0e0e0;
+}
+
+.service-config {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.service-config h4 {
+  margin: 0 0 15px 0;
+  font-size: 14px;
+  color: #555;
+  font-weight: 600;
+}
+
+.config-row {
+  background-color: #f8f9fa;
+  border-left: 3px solid #007bff;
+}
+
+.config-row td {
+  padding: 8px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 13px;
+}
+
+.config-label {
+  font-weight: 600;
+  color: #495057;
+  padding-left: 12px;
+}
+
+.config-field-cell {
+  padding: 8px;
+}
+
+.commission-select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 13px;
+  background-color: white;
+}
+
+.commission-select:disabled {
+  background-color: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+.commission-value-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.commission-value-container strong {
+  font-size: 12px;
+  color: #495057;
+  font-weight: 600;
+}
+
+.commission-input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 13px;
+  background-color: white;
+}
+
+.commission-input:disabled {
+  background-color: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+.commission-config {
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  margin: 10px;
+}
+
+.config-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: end;
+}
+
+.config-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.config-field label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 6px;
+}
+
+.config-field select,
+.config-field input {
+  padding: 8px 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: white;
+}
+
+.config-field select:disabled,
+.config-field input:disabled {
+  background-color: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.panel-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.add-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.add-button:hover {
+  background-color: #0056b3;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .config-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .service-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .service-actions {
+    justify-content: flex-end;
+    margin-top: 10px;
+  }
+}
+
+/* Estilos para tabela de serviços do profissional */
+.services-table-container {
+  margin-top: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.services-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+}
+
+.services-table th {
+  background-color: #f8f9fa;
+  padding: 12px 8px;
+  text-align: left;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #e0e0e0;
+  font-size: 14px;
+}
+
+.services-table td {
+  padding: 12px 8px;
+  border-bottom: 1px solid #e9ecef;
+  vertical-align: middle;
+}
+
+.service-row.selected {
+  background-color: #f8fff8;
+}
+
+.service-row.unselected {
+  background-color: #f9f9f9;
+  color: #6c757d;
+}
+
+.expand-cell {
+  text-align: center;
+  width: 40px;
+}
+
+.expand-button {
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.expand-button:hover {
+  background: #0056b3;
+}
+
+.checkbox-cell {
+  text-align: center;
+  width: 60px;
+}
+
+.checkbox-cell input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.service-name {
+  padding-left: 12px;
+}
+
+.service-info strong {
+  display: block;
+  font-size: 15px;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+.service-info .service-description {
+  font-size: 12px;
+  color: #6c757d;
+  font-style: italic;
+}
+
+.value-cell input,
+.time-cell input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 13px;
+  background-color: #f8f9fa;
+}
+
+.disabled-field {
+  background-color: #e9ecef !important;
+  color: #6c757d !important;
+  cursor: not-allowed !important;
+  border-color: #dee2e6 !important;
+}
+
+/* Responsividade para tabela */
+@media (max-width: 768px) {
+  .services-table th,
+  .services-table td {
+    padding: 8px 4px;
+    font-size: 12px;
+  }
+  
+  .config-fields {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .commission-config {
+    margin: 5px;
+    padding: 15px;
+  }
+}
+
+/* Seção de Configuração de Comissão */
+.commission-section {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.commission-section .form-section-header {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.commission-config-card {
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 15px;
+  border-left: 4px solid #007bff;
+}
+
+.config-card-header {
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.config-card-header h4 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+  color: #333;
+  font-weight: 600;
+}
+
+.config-card-header .service-details {
+  font-size: 14px;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.config-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: end;
+}
+
+.config-form-row .form-group {
+  margin-bottom: 0;
+}
+
+.config-form-row .form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #495057;
+  font-size: 14px;
+}
+
+.config-form-row .form-group select,
+.config-form-row .form-group input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: white;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.config-form-row .form-group select:focus,
+.config-form-row .form-group input:focus {
+  border-color: #007bff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.config-form-row .form-group input:disabled,
+.config-form-row .form-group select:disabled {
+  background-color: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+/* Responsividade para configuração */
+@media (max-width: 768px) {
+  .config-form-row {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .commission-config-card {
+    padding: 15px;
+  }
+  
+  .commission-section {
+    margin-top: 20px;
+    padding-top: 15px;
+  }
+}

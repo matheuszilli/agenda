@@ -11,5 +11,6 @@ public record ItemResponse(
     Integer durationMinutes,
     Boolean requiresPrePayment,
     UUID companyId,
+    UUID subsidiaryId,
     Boolean active
     ) {}

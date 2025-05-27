@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/professionals")
+@RequestMapping("${api.version}/professionals")
 @RequiredArgsConstructor
 public class ProfessionalController {
 
@@ -31,6 +31,16 @@ public class ProfessionalController {
     @GetMapping("/{id}")
     public ProfessionalResponse get(@PathVariable UUID id) {
         return service.get(id);
+    }
+
+    @GetMapping("/{id}/services")
+    public ResponseEntity<List<ItemResponse>> getServices(@PathVariable UUID id) {
+        return ResponseEntity.ok(service.getServicesByProfessional(id));
+    }
+
+    @GetMapping("/by-subsidiary/{id}")
+    public List<ProfessionalResponse> listBySubsidiary(@PathVariable UUID id) {
+        return service.listBySubsidiary(id);
     }
 
     @GetMapping

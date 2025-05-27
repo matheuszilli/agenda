@@ -15,7 +15,7 @@ import java.util.UUID;
 import java.util.List;
 
 @RestController
-@RequestMapping("/subsidiaries")
+@RequestMapping("${api.version}/subsidiaries")
 @RequiredArgsConstructor
 public class SubsidiaryController {
 

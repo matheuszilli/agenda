@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { type Item, itemService } from '../../services/itemService';
 import { type Company, companyService } from '../../services/companyService';
+import { type Subsidiary, subsidiaryService } from '../../services/subsidiaryService';
 import './CompanyForm.css';
 
 // Função para formatar valor para moeda brasileira
@@ -30,32 +32,43 @@ const emptyItem: Item = {
   durationMinutes: 30,
   requiresPrePayment: false,
   companyId: '',
+  subsidiaryId: '',
   active: true
 };
 
 export default function ItemForm({ initialData = emptyItem, onSubmit, onCancel }: ItemFormProps) {
-  const [formData, setFormData] = useState<Item>(initialData);
+  const [searchParams] = useSearchParams();
+  const subsidiaryIdFromUrl = searchParams.get('subsidiaryId');
+  
+  const [formData, setFormData] = useState<Item>({
+    ...initialData,
+    subsidiaryId: initialData.subsidiaryId || subsidiaryIdFromUrl || ''
+  });
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [subsidiaries, setSubsidiaries] = useState<Subsidiary[]>([]);
   const [professionals, setProfessionals] = useState<any[]>([]);
   const [assignedProfessionals, setAssignedProfessionals] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('service-info');
-  const [formattedPrice, setFormattedPrice] = useState(formatCurrency(initialData.price || 0));
+  const [formattedPrice, setFormattedPrice] = useState(
+    initialData.price && initialData.price > 0 ? formatCurrency(initialData.price) : ''
+  );
   
   // Para informações de erro de validação
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    const fetchCompanies = async () => {
+    const fetchData = async () => {
       try {
-        const data = await companyService.getAll();
-        setCompanies(data);
+        const companiesData = await companyService.getAll();
+        setCompanies(companiesData);
+        
         // Se não tiver uma empresa selecionada e houver empresas disponíveis
-        if (!formData.companyId && data.length > 0) {
+        if (!formData.companyId && companiesData.length > 0) {
           setFormData(prev => ({
             ...prev,
-            companyId: data[0].id || ''
+            companyId: companiesData[0].id || ''
           }));
         }
       } catch (err) {
@@ -66,8 +79,32 @@ export default function ItemForm({ initialData = emptyItem, onSubmit, onCancel }
       }
     };
 
-    fetchCompanies();
+    fetchData();
   }, []);
+
+  // Carregar subsidiárias quando a empresa mudar
+  useEffect(() => {
+    if (formData.companyId) {
+      fetchSubsidiaries(formData.companyId);
+    }
+  }, [formData.companyId]);
+
+  const fetchSubsidiaries = async (companyId: string) => {
+    try {
+      const data = await subsidiaryService.getByCompany(companyId);
+      setSubsidiaries(data);
+      
+      // Se veio um subsidiaryId da URL e ele pertence à empresa, mantém
+      // Senão, seleciona a primeira subsidiária disponível
+      if (subsidiaryIdFromUrl && data.some(s => s.id === subsidiaryIdFromUrl)) {
+        setFormData(prev => ({ ...prev, subsidiaryId: subsidiaryIdFromUrl }));
+      } else if (!formData.subsidiaryId && data.length > 0) {
+        setFormData(prev => ({ ...prev, subsidiaryId: data[0].id || '' }));
+      }
+    } catch (err) {
+      console.error('Erro ao carregar subsidiárias:', err);
+    }
+  };
 
   // Carregar profissionais quando já existe um ID de serviço
   useEffect(() => {
@@ -97,6 +134,7 @@ export default function ItemForm({ initialData = emptyItem, onSubmit, onCancel }
     if (!formData.price || formData.price <= 0) newErrors.price = "O preço deve ser maior que zero";
     if (!formData.durationMinutes || formData.durationMinutes <= 0) newErrors.durationMinutes = "A duração deve ser maior que zero";
     if (!formData.companyId) newErrors.companyId = "A empresa é obrigatória";
+    if (!formData.subsidiaryId) newErrors.subsidiaryId = "A subsidiária é obrigatória";
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -106,13 +144,20 @@ export default function ItemForm({ initialData = emptyItem, onSubmit, onCancel }
     const { name, value, type } = e.target as HTMLInputElement;
     
     if (name === 'price') {
-      // Atualiza o valor formatado exibido no input
-      setFormattedPrice(formatCurrency(parseCurrency(value)));
-      // Atualiza o valor numérico no estado
+      // Permitir apenas números, vírgula e ponto
+      const numericValue = value.replace(/[^\d,.-]/g, '');
+      // Converter vírgula para ponto para cálculos
+      const normalizedValue = numericValue.replace(',', '.');
+      const parsedValue = parseFloat(normalizedValue) || 0;
+      
+      // Atualizar o valor numérico no estado
       setFormData({
         ...formData,
-        price: parseCurrency(value)
+        price: parsedValue
       });
+      
+      // Manter o valor digitado no input (sem formatação automática)
+      setFormattedPrice(numericValue);
     } else if (type === 'checkbox') {
       const { checked } = e.target as HTMLInputElement;
       setFormData({
@@ -132,6 +177,13 @@ export default function ItemForm({ initialData = emptyItem, onSubmit, onCancel }
         ...errors,
         [name]: ''
       });
+    }
+  };
+
+  const handlePriceBlur = () => {
+    // Formatar o preço quando o usuário sair do campo
+    if (formData.price > 0) {
+      setFormattedPrice(formatCurrency(formData.price));
     }
   };
 
@@ -200,6 +252,26 @@ export default function ItemForm({ initialData = emptyItem, onSubmit, onCancel }
           </div>
 
           <div className="form-group full-width">
+            <label>Subsidiária*</label>
+            <select
+              name="subsidiaryId"
+              value={formData.subsidiaryId}
+              onChange={handleChange}
+              required
+              className={errors.subsidiaryId ? 'error' : ''}
+              disabled={!formData.companyId}
+            >
+              <option value="">Selecione uma subsidiária</option>
+              {subsidiaries.map(subsidiary => (
+                <option key={subsidiary.id} value={subsidiary.id}>
+                  {subsidiary.name}
+                </option>
+              ))}
+            </select>
+            {errors.subsidiaryId && <div className="error-message">{errors.subsidiaryId}</div>}
+          </div>
+
+          <div className="form-group full-width">
             <label>Nome do Serviço*</label>
             <input
               type="text"
@@ -233,7 +305,8 @@ export default function ItemForm({ initialData = emptyItem, onSubmit, onCancel }
               onChange={handleChange}
               required
               className={errors.price ? 'error' : ''}
-              placeholder="R$ 0,00"
+              placeholder="Ex: 50,00"
+              onBlur={handlePriceBlur}
             />
             {errors.price && <div className="error-message">{errors.price}</div>}
           </div>

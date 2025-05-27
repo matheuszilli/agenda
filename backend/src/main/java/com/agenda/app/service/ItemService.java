@@ -6,8 +6,10 @@ import com.agenda.app.dto.ItemResponse;
 import com.agenda.app.mapper.ItemMapper;
 import com.agenda.app.model.Item;
 import com.agenda.app.model.Company;
+import com.agenda.app.model.Subsidiary;
 import com.agenda.app.repository.ItemRepository;
 import com.agenda.app.repository.CompanyRepository;
+import com.agenda.app.repository.SubsidiaryRepository;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
     private final CompanyRepository companyRepository;
+    private final SubsidiaryRepository subsidiaryRepository;
     private final ItemMapper mapper;
 
     // --- AQUI CRIA O SERVIÇO - AS REGRA PRA CRIAR E VALIDAR O SERVIÇO
@@ -35,8 +38,12 @@ public class ItemService {
         Company company = companyRepository.findById(dto.companyId())
                 .orElseThrow(() -> new IllegalArgumentException("Company not found"));
 
+        Subsidiary subsidiary = subsidiaryRepository.findById(dto.subsidiaryId())
+                .orElseThrow(() -> new IllegalArgumentException("Subsidiary not found"));
+
         Item entity = mapper.toEntity(dto);
         entity.setCompany(company);
+        entity.setSubsidiary(subsidiary);
 
         itemRepository.save(entity);
         return mapper.toResponse(entity);
@@ -51,8 +58,24 @@ public class ItemService {
     }
 
     @Transactional(readOnly = true)
+    public List<ItemResponse> getAll() {
+        return itemRepository.findAll()
+                .stream()
+                .map(mapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public List<ItemResponse> listBySubsidiary(UUID subsidiaryId) {
         return itemRepository.findBySubsidiaryId(subsidiaryId)
+                .stream()
+                .map(mapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ItemResponse> listByCompany(UUID companyId) {
+        return itemRepository.findByCompanyId(companyId)
                 .stream()
                 .map(mapper::toResponse)
                 .collect(Collectors.toList());
@@ -64,13 +87,26 @@ public class ItemService {
         Item entity = itemRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Service not found"));
 
-        //sobrescrever campos
-        mapper.toEntity(dto);
+        // Verificar se a empresa mudou
+        if (!entity.getCompany().getId().equals(dto.companyId())) {
+            Company company = companyRepository.findById(dto.companyId())
+                    .orElseThrow(() -> new IllegalArgumentException("Company not found"));
+            entity.setCompany(company);
+        }
+
+        // Verificar se a subsidiária mudou
+        if (!entity.getSubsidiary().getId().equals(dto.subsidiaryId())) {
+            Subsidiary subsidiary = subsidiaryRepository.findById(dto.subsidiaryId())
+                    .orElseThrow(() -> new IllegalArgumentException("Subsidiary not found"));
+            entity.setSubsidiary(subsidiary);
+        }
+
+        // Atualizar campos
         entity.setName(dto.name());
         entity.setDescription(dto.description());
         entity.setDurationMinutes(dto.durationMinutes());
         entity.setPrice(dto.price());
-        entity.setActive(dto.active());
+        entity.setActive(dto.active() != null ? dto.active() : true);
         entity.setRequiresPrePayment(dto.requiresPrePayment());
 
         itemRepository.save(entity);

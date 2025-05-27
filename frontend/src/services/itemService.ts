@@ -9,7 +9,7 @@ export interface Item {
     durationMinutes: number;
     requiresPrePayment: boolean;
     companyId: string;
-    subsidiaryId?: string;
+    subsidiaryId: string;
     active?: boolean;
 }
 
@@ -21,7 +21,7 @@ export interface ProfessionalServiceAssignment {
 export const itemService = {
     getAll: async (): Promise<Item[]> => {
         try {
-            const response = await api.get('/services');
+            const response = await api.get('/v1/services');
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -30,7 +30,7 @@ export const itemService = {
 
     getById: async (id: string): Promise<Item> => {
         try {
-            const response = await api.get(`/services/${id}`);
+            const response = await api.get(`/v1/services/${id}`);
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -39,7 +39,7 @@ export const itemService = {
 
     getByCompany: async (companyId: string): Promise<Item[]> => {
         try {
-            const response = await api.get(`/services/by-company/${companyId}`);
+            const response = await api.get(`/v1/services/by-company/${companyId}`);
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -57,7 +57,7 @@ export const itemService = {
 
     getByProfessional: async (professionalId: string): Promise<Item[]> => {
         try {
-            const response = await api.get(`/services/by-professional/${professionalId}`);
+            const response = await api.get(`/v1/services/by-professional/${professionalId}`);
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -66,7 +66,7 @@ export const itemService = {
 
     create: async (item: Item): Promise<Item> => {
         try {
-            const response = await api.post('/services', item);
+            const response = await api.post('/v1/services', item);
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -75,7 +75,7 @@ export const itemService = {
 
     update: async (id: string, item: Item): Promise<Item> => {
         try {
-            const response = await api.put(`/services/${id}`, item);
+            const response = await api.put(`/v1/services/${id}`, item);
             return response.data;
         } catch (error) {
             return handleApiError(error);
@@ -84,7 +84,7 @@ export const itemService = {
 
     delete: async (id: string): Promise<void> => {
         try {
-            await api.delete(`/services/${id}`);
+            await api.delete(`/v1/services/${id}`);
         } catch (error) {
             return handleApiError(error);
         }
@@ -93,7 +93,7 @@ export const itemService = {
     // Methods for assigning services to professionals
     assignToProfessional: async (assignment: ProfessionalServiceAssignment): Promise<void> => {
         try {
-            await api.post('/professional-services', assignment);
+            await api.post('/v1/professional-services', assignment);
         } catch (error) {
             return handleApiError(error);
         }
@@ -101,7 +101,7 @@ export const itemService = {
 
     removeFromProfessional: async (assignment: ProfessionalServiceAssignment): Promise<void> => {
         try {
-            await api.delete('/professional-services', { data: assignment });
+            await api.delete('/v1/professional-services', { data: assignment });
         } catch (error) {
             return handleApiError(error);
         }

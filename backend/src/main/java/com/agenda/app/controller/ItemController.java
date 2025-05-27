@@ -27,6 +27,12 @@ public class ItemController {
                 .body(respoense);
     }
 
+    @GetMapping
+    public ResponseEntity<List<ItemResponse>> getAll() {
+        List<ItemResponse> items = service.getAll();
+        return ResponseEntity.ok(items);
+    }
+
     @GetMapping("/{id}")
     public ItemResponse get(@PathVariable UUID id) {
         return service.get(id);
@@ -35,6 +41,12 @@ public class ItemController {
     @GetMapping("/by-subsidiary/{subsidiaryId}")
     public ResponseEntity<List<ItemResponse>> listBySubsidiary(@PathVariable UUID subsidiaryId) {
         List<ItemResponse> items = service.listBySubsidiary(subsidiaryId);
+        return ResponseEntity.ok(items);
+    }
+
+    @GetMapping("/by-company/{companyId}")
+    public ResponseEntity<List<ItemResponse>> listByCompany(@PathVariable UUID companyId) {
+        List<ItemResponse> items = service.listByCompany(companyId);
         return ResponseEntity.ok(items);
     }
 

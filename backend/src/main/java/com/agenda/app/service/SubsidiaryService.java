@@ -8,7 +8,7 @@ import com.agenda.app.mapper.ItemMapper;
 import com.agenda.app.model.Company;
 import com.agenda.app.model.Subsidiary;
 import com.agenda.app.repository.CompanyRepository;
-import com.agenda.app.repository.ServiceRepository;
+import com.agenda.app.repository.ItemRepository;
 import com.agenda.app.repository.SubsidiaryRepository;
 import com.agenda.app.util.CnpjUtils;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +24,9 @@ import java.util.stream.Collectors;
 public class SubsidiaryService {
 
     private final SubsidiaryRepository subsidiaryRepository;
+    private final ItemRepository itemRepository;
     private final CompanyRepository companyRepository;
     private final SubsidiaryMapper mapper;
-    private final ServiceRepository serviceRepository;
     private final ItemMapper itemMapper;
 
     /* ======================= CREATE ======================= */
@@ -96,7 +96,7 @@ public class SubsidiaryService {
 
     @Transactional(readOnly = true)
     public List<ItemResponse> listServicesBySubsidiary(UUID subsidiaryId) {
-        return serviceRepository.findBySubsidiaryId(subsidiaryId)
+        return itemRepository.findBySubsidiaryId(subsidiaryId)
                 .stream()
                 .map(itemMapper::toResponse)
                 .collect(Collectors.toList());

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { type Item, itemService } from '../../services/itemService';
 import ItemForm from '../../components/forms/ItemForm';
 import './ItemManagement.css';
@@ -7,22 +7,29 @@ import './ItemManagement.css';
 export default function ItemManagement() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const [item, setItem] = useState<Item | null>(null);
-  const [loading, setLoading] = useState(id !== 'new');
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const isNew = id === 'new';
+  
+  // Determinar se é novo baseado na rota
+  const isNew = location.pathname.includes('/new') || id === 'new';
 
   useEffect(() => {
-    if (!isNew) {
+    if (!isNew && id && id !== 'new') {
       fetchItem();
     }
-  }, [id]);
+  }, [id, isNew]);
 
   const fetchItem = async () => {
+    if (!id || id === 'new' || isNew) {
+      return;
+    }
+    
     try {
       setLoading(true);
-      const data = await itemService.getById(id!);
+      const data = await itemService.getById(id);
       setItem(data);
       setError('');
     } catch (err: any) {
@@ -34,14 +41,21 @@ export default function ItemManagement() {
   };
 
   const handleSubmit = async (data: Item) => {
+    console.log('handleSubmit called with:', { id, isNew, data, pathname: location.pathname });
+    
     try {
       setLoading(true);
       if (isNew) {
+        console.log('Creating new service...');
         await itemService.create(data);
         setSuccess('Serviço criado com sucesso!');
-      } else {
-        await itemService.update(id!, data);
+      } else if (id && id !== 'new') {
+        console.log('Updating existing service with id:', id);
+        await itemService.update(id, data);
         setSuccess('Serviço atualizado com sucesso!');
+      } else {
+        console.log('Invalid state:', { id, isNew, pathname: location.pathname });
+        throw new Error('Estado inválido para salvar serviço');
       }
       
       // Redirecionar para a lista após um breve delay

@@ -14,4 +14,7 @@ public interface ItemRepository extends JpaRepository<Item, UUID> {
     );
 
     List<Item> findBySubsidiaryId(UUID subsidiaryId);
+    
+    List<Item> findByCompanyId(UUID companyId);
+
 }
