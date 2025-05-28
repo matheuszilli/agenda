@@ -14,7 +14,7 @@ import java.util.UUID;
 public class SubsidiaryResponse {
     private UUID id;
     private String name;
-    private AddressDTO address;
+    private AddressResponse address;
     private String documentNumber;
     private UUID companyId;
     private List<SubsidiaryScheduleEntryResponse> schedule;

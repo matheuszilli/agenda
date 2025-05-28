@@ -14,11 +14,9 @@ import lombok.Setter;
 @EqualsAndHashCode(callSuper = true)
 public class User extends BaseEntity {
 
-    @NotBlank
     @Column(nullable = false, unique = true, length = 50)
     private String username;
 
-    @NotBlank
     @Column(name = "password_hash", nullable = false, length = 255)
     private String passwordHash;
 
@@ -30,18 +28,15 @@ public class User extends BaseEntity {
     @Column(nullable = false, length = 20)
     private UserRole role;
 
-    @NotBlank
     @Column(name = "first_name", nullable = false, length = 50)
     private String firstName;
 
-    @NotBlank
     @Column(name = "last_name", nullable = false, length = 50)
     private String lastName;
 
     @Column(length = 20)
     private String phone;
 
-    @NotBlank
     @Column(length = 20)
     private String document;
 

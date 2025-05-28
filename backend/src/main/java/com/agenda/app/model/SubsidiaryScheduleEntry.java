@@ -17,15 +17,12 @@ public class SubsidiaryScheduleEntry extends BaseEntity {
     @JoinColumn(name = "subsidiary_id")
     private Subsidiary subsidiary;
 
-    @NotNull
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
-    @NotNull
     @Column(name = "open_time", nullable = false)
     private LocalTime openTime;
 
-    @NotNull
     @Column(name = "close_time", nullable = false)
     private LocalTime closeTime;
 

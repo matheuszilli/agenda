@@ -8,7 +8,7 @@ public record ProfessionalResponse(
         String lastName,
         String fullName,
         String documentNumber,
-        AddressDTO address,
+        AddressResponse address,
         String phone,
         String email,
         UUID subsidiaryId

@@ -23,7 +23,6 @@ public class AccountTransaction extends BaseEntity {
     @Column(name = "transaction_type", nullable = false, length = 20)
     private AccountTransactionType transactionType;
 
-    @NotNull
     @Column(name = "amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 

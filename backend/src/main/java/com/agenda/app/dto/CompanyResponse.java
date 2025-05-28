@@ -12,7 +12,9 @@ import java.util.UUID;
 public class CompanyResponse {
     private UUID id;
     private String name;
-    private AddressDTO address;
+    private String tradingName;
+    private AddressResponse address;
     private String phone;
     private String documentNumber;
+    private String typeOfDocument;
 }

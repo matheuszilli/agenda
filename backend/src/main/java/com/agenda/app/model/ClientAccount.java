@@ -22,15 +22,12 @@ public class ClientAccount extends BaseEntity {
     @JoinColumn(name = "customer_id", nullable = false, unique = true)
     private Customer customer;
 
-    @NotNull
     @Column(name = "free_balance", nullable = false, precision = 10, scale = 2)
     private BigDecimal freeBalance = BigDecimal.ZERO;
 
-    @NotNull
     @Column(name = "held_balance", nullable = false, precision = 10, scale = 2)
     private BigDecimal heldBalance = BigDecimal.ZERO;
 
-    @NotNull
     @Column(name = "total_balance", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalBalance = BigDecimal.ZERO;
 

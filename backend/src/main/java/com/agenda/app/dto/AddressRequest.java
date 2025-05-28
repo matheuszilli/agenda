@@ -1,12 +1,13 @@
 package com.agenda.app.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
 
-/**
- * @deprecated Use AddressDTO instead
- */
-@Data
-@Deprecated
-public class AddressRequest extends AddressDTO {
-}
+public record AddressRequest(
+    @NotBlank String street,
+    @NotBlank String number,
+    @NotBlank String complement,
+    @NotBlank String neighborhood,
+    @NotBlank String city,
+    @NotBlank String state,
+    @NotBlank String zipCode
+) {}

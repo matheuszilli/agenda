@@ -55,8 +55,8 @@ public class ChairRoomService {
 
     @Transactional
     public ChairRoomResponse createChairRoom(ChairRoomRequest request) {
-        Subsidiary subsidiary = subsidiaryRepository.findById(request.getSubsidiaryId())
-                .orElseThrow(() -> new IllegalArgumentException("Subsidiary not found with ID: " + request.getSubsidiaryId()));
+        Subsidiary subsidiary = subsidiaryRepository.findById(request.subsidiaryId())
+                .orElseThrow(() -> new IllegalArgumentException("Subsidiary not found with ID: " + request.subsidiaryId()));
 
         ChairRoom chairRoom = mapper.toEntity(request, subsidiary);
         chairRoom = chairRoomRepository.save(chairRoom);
@@ -71,10 +71,10 @@ public class ChairRoomService {
 
         mapper.updateFromRequest(request, chairRoom);
 
-        if (request.getSubsidiaryId() != null &&
-                !request.getSubsidiaryId().equals(chairRoom.getSubsidiary().getId())) {
-            Subsidiary subsidiary = subsidiaryRepository.findById(request.getSubsidiaryId())
-                    .orElseThrow(() -> new IllegalArgumentException("Subsidiary not found with ID: " + request.getSubsidiaryId()));
+        if (request.subsidiaryId() != null &&
+                !request.subsidiaryId().equals(chairRoom.getSubsidiary().getId())) {
+            Subsidiary subsidiary = subsidiaryRepository.findById(request.subsidiaryId())
+                    .orElseThrow(() -> new IllegalArgumentException("Subsidiary not found with ID: " + request.subsidiaryId()));
             chairRoom.setSubsidiary(subsidiary);
         }
 

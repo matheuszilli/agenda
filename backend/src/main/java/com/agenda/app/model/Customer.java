@@ -20,11 +20,9 @@ import java.time.LocalDate;
 @EntityListeners(AuditingEntityListener.class)
 public class Customer extends BaseEntity {
 
-    @NotBlank @Size(max = 50)
     @Column(name = "first_name", nullable = false, length = 50)
     private String firstName;
 
-    @NotBlank @Size(max = 50)
     @Column(name = "last_name", nullable = false, length = 50)
     private String lastName;
 

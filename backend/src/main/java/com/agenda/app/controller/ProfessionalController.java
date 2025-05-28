@@ -21,7 +21,7 @@ public class ProfessionalController {
     public ResponseEntity<ProfessionalResponse> create(
             @RequestBody @Valid ProfessionalRequest body) {
         System.out.println("ENDEREÇO: " + body.getAddress());
-        System.out.println("CIDADE: " + (body.getAddress() != null ? body.getAddress().getCity() : "nulo"));
+        System.out.println("CIDADE: " + (body.getAddress() != null ? body.getAddress().city() : "nulo"));
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

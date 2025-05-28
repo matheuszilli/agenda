@@ -27,12 +27,10 @@ public class Professional extends BaseEntity {
         @JoinColumn(name = "user_id")
         private User user;
 
-        @NotBlank
         @Size(max = 50)
         @Column(name = "first_name", nullable = false, length = 50)
         private String firstName;
 
-        @NotBlank
         @Size(max = 50)
         @Column(name = "last_name", nullable = false, length = 50)
         private String lastName;
@@ -40,7 +38,6 @@ public class Professional extends BaseEntity {
         @Column(name = "full_name", nullable = false, length = 100, updatable = false)
         private String fullName;
 
-        @NotBlank
         @Column(name = "document_number", length = 20)
         private String documentNumber;
 
@@ -51,7 +48,6 @@ public class Professional extends BaseEntity {
         private String phone;
 
         @Email
-        @NotBlank
         @Column(name = "email", nullable = false, length = 100)
         private String email;
 

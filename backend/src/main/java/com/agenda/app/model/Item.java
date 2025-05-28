@@ -19,7 +19,6 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public class Item extends BaseEntity {
 
-    @NotBlank
     @Column(nullable = false, length = 100)
     private String name;
 

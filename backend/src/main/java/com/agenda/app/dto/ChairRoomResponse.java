@@ -13,5 +13,5 @@ public record ChairRoomResponse (
     UUID subsidiaryId,
     String description,
     Integer capacity,
-    Integer roomNumber
+    String roomNumber
 ) {}

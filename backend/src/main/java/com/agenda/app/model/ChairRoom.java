@@ -14,7 +14,6 @@ import lombok.Setter;
 @EqualsAndHashCode(callSuper = true)
 public class ChairRoom extends BaseEntity {
 
-    @NotBlank
     @Column(nullable = false, length = 100)
     private String name;
 

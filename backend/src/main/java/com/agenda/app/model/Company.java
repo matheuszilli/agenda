@@ -24,17 +24,18 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class Company extends BaseEntity {
 
-    @NotBlank
     @Column(nullable = false, length = 100)
     private String name;
+
+    @Column(nullable = false, length = 100, name = "trading_name")
+    private String tradingName;
 
     @Embedded
     private Address address;
 
     @Column(length = 20)
     private String phone;
-
-    @NotBlank
+    
     @Column(name = "document_number", length = 20)
     private String documentNumber;
 

@@ -13,9 +13,11 @@ export interface Address {
 export interface Company {
     id?: string;
     name: string;
+    tradingName: string;
     address: Address;
     phone: string;
     documentNumber: string;
+    typeOfDocument: string;
 }
 
 // Interface de erro da API

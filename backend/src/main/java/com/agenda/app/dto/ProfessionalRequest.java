@@ -16,7 +16,7 @@ public class ProfessionalRequest {
     @NotBlank private String firstName;
     @NotBlank private String lastName;
     @NotBlank private String documentNumber;
-    @NotNull  private AddressDTO address;
+    @NotNull  private AddressRequest address;
     @NotBlank private String phone;
     @Email @NotBlank private String email;
     @NotNull private UUID subsidiaryId;

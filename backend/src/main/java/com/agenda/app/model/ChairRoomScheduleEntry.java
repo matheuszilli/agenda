@@ -18,15 +18,12 @@ public class ChairRoomScheduleEntry extends BaseEntity {
     @JoinColumn(name = "chair_room_id")
     private ChairRoom chairRoom;
 
-    @NotNull
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
-    @NotNull
     @Column(name = "open_time", nullable = false)
     private LocalTime openTime;
 
-    @NotNull
     @Column(name = "close_time", nullable = false)
     private LocalTime closeTime;
 

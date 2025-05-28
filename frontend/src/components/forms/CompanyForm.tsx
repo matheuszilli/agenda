@@ -58,6 +58,7 @@ interface CompanyFormProps {
 
 const emptyCompany: Company = {
     name: '',
+    tradingName: '',
     address: {
         street: '',
         number: '',
@@ -67,7 +68,8 @@ const emptyCompany: Company = {
         zipCode: ''
     },
     phone: '',
-    documentNumber: ''
+    documentNumber: '',
+    typeOfDocument: 'CNPJ'
 };
 
 export default function CompanyForm({ initialData = emptyCompany, onSubmit, onCancel }: CompanyFormProps) {
@@ -110,7 +112,9 @@ export default function CompanyForm({ initialData = emptyCompany, onSubmit, onCa
         
         // Validar campos obrigatórios da empresa
         if (!formData.name) newErrors.name = "O nome da empresa é obrigatório";
+        if (!formData.tradingName) newErrors.tradingName = "O nome fantasia é obrigatório";
         if (!formData.documentNumber) newErrors.documentNumber = "O CNPJ é obrigatório";
+        if (!formData.typeOfDocument) newErrors.typeOfDocument = "O tipo de documento é obrigatório";
         
         // Validar campos obrigatórios do endereço
         if (!formData.address.street) newErrors['address.street'] = "A rua é obrigatória";
@@ -239,6 +243,35 @@ export default function CompanyForm({ initialData = emptyCompany, onSubmit, onCa
                             className={errors.name ? 'error' : ''}
                         />
                         {errors.name && <div className="error-message">{errors.name}</div>}
+                    </div>
+
+                    <div className="form-group full-width">
+                        <label>Nome Fantasia*</label>
+                        <input
+                            type="text"
+                            name="tradingName"
+                            value={formData.tradingName}
+                            onChange={handleChange}
+                            required
+                            className={errors.tradingName ? 'error' : ''}
+                        />
+                        {errors.tradingName && <div className="error-message">{errors.tradingName}</div>}
+                    </div>
+
+                    <div className="form-group">
+                        <label>Tipo de Documento*</label>
+                        <select
+                            name="typeOfDocument"
+                            value={formData.typeOfDocument}
+                            onChange={handleChange}
+                            required
+                            className={errors.typeOfDocument ? 'error' : ''}
+                        >
+                            <option value="">Selecione o tipo</option>
+                            <option value="CNPJ">CNPJ</option>
+                            <option value="CPF">CPF</option>
+                        </select>
+                        {errors.typeOfDocument && <div className="error-message">{errors.typeOfDocument}</div>}
                     </div>
 
                     <div className="form-group">

@@ -1,7 +1,6 @@
 package com.agenda.app.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,11 +18,10 @@ public class AccountAdjustment extends BaseEntity {
     @JoinColumn(name = "transaction_id", nullable = false)
     private AccountTransaction transaction;
 
-    @NotNull
+
     @Column(name = "amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
-    @NotNull
     @Column(name = "reason", nullable = false, length = 500)
     private String reason;
 

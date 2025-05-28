@@ -102,6 +102,7 @@ export default function CompanyManagement() {
                             <thead>
                                 <tr>
                                     <th>Nome</th>
+                                    <th>Nome Fantasia</th>
                                     <th>CNPJ</th>
                                     <th>Telefone</th>
                                     <th>Cidade/UF</th>
@@ -112,6 +113,7 @@ export default function CompanyManagement() {
                                 {companies.map(company => (
                                     <tr key={company.id}>
                                         <td>{company.name}</td>
+                                        <td>{company.tradingName}</td>
                                         <td>{company.documentNumber}</td>
                                         <td>{company.phone}</td>
                                         <td>{company.address?.city}/{company.address?.state}</td>

@@ -18,7 +18,6 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public class Subsidiary extends BaseEntity {
 
-    @NotBlank
     @Column(nullable = false, length = 100)
     private String name;
 
@@ -35,7 +34,6 @@ public class Subsidiary extends BaseEntity {
     @Column(name = "close_time")
     private LocalTime closeTime;
 
-    @NotBlank
     @Column(name = "document_number", length = 20)
     private String documentNumber;
 

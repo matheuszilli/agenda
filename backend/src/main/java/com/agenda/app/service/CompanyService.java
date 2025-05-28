@@ -26,18 +26,18 @@ public class CompanyService {
     @Transactional
     public CompanyResponse create(CompanyRequest dto) {
         // Validar nome único
-        if (repo.existsByName(dto.getName())) {
+        if (repo.existsByName(dto.name())) {
             throw new DuplicateEntityException(
                     "Company with name already exists",
                     "name",
-                    dto.getName()
+                    dto.name()
             );
         }
 
         // Formatar CNPJ para o padrão XX.XXX.XXX/XXXX-XX
         String formattedCnpj;
         try {
-            formattedCnpj = CnpjUtils.formatCnpj(dto.getDocumentNumber());
+            formattedCnpj = CnpjUtils.formatCnpj(dto.documentNumber());
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid CNPJ format: " + e.getMessage());
         }
@@ -60,17 +60,6 @@ public class CompanyService {
             );
         }
 
-        // Formatar telefone
-        String formattedPhone = null;
-        if (dto.getPhone() != null && !dto.getPhone().isBlank()) {
-            formattedPhone = PhoneUtils.formatPhone(dto.getPhone());
-        }
-
-        // Atualizar o DTO com valores formatados
-        dto.setDocumentNumber(formattedCnpj);
-        dto.setPhone(formattedPhone);
-
-        // Criar a entidade e salvar
         Company entity = mapper.toEntity(dto);
         repo.save(entity);
         return mapper.toResponse(entity);
@@ -100,18 +89,18 @@ public class CompanyService {
                 .orElseThrow(() -> new EntityNotFoundException("Company not found with id: " + id));
 
         // Verificar se o nome está sendo alterado e se já existe
-        if (!dto.getName().equals(entity.getName()) && repo.existsByName(dto.getName())) {
+        if (!dto.name().equals(entity.getName()) && repo.existsByName(dto.name())) {
             throw new DuplicateEntityException(
                     "Company with name already exists",
                     "name",
-                    dto.getName()
+                    dto.name()
             );
         }
 
         // Formatar CNPJ
         String formattedCnpj;
         try {
-            formattedCnpj = CnpjUtils.formatCnpj(dto.getDocumentNumber());
+            formattedCnpj = CnpjUtils.formatCnpj(dto.documentNumber());
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid CNPJ format: " + e.getMessage());
         }
@@ -136,17 +125,7 @@ public class CompanyService {
             );
         }
 
-        // Formatar telefone
-        String formattedPhone = null;
-        if (dto.getPhone() != null && !dto.getPhone().isBlank()) {
-            formattedPhone = PhoneUtils.formatPhone(dto.getPhone());
-        }
-
-        // Atualizar o DTO com valores formatados
-        dto.setDocumentNumber(formattedCnpj);
-        dto.setPhone(formattedPhone);
-
-        // Atualizar a entidade
+        // Atualizar a entidade existente com os dados do DTO
         mapper.updateEntityFromDto(dto, entity);
         repo.save(entity);
         return mapper.toResponse(entity);
